@@ -1,0 +1,98 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://Scripts/AI/Movement/MovementController.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/AI/Movement/PositionClamp.gd" type="Script" id=2]
+[ext_resource path="res://Scripts/AI/Flocking/Alignment.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/AI/Flocking/Seperation.gd" type="Script" id=4]
+[ext_resource path="res://Scripts/AI/Flocking/Cohesion.gd" type="Script" id=5]
+[ext_resource path="res://Scenes/Characters/Spaceship/AvoidWalls.gd" type="Script" id=6]
+[ext_resource path="res://Scenes/Characters/Spaceship/PirateShip.tres" type="ArrayMesh" id=7]
+[ext_resource path="res://Assets/Sprites/Smoke.png" type="Texture" id=8]
+
+[sub_resource type="Curve" id=1]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), -2.16223, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=2]
+width = 32
+curve = SubResource( 1 )
+
+[sub_resource type="ParticlesMaterial" id=3]
+gravity = Vector3( 0, 0, 0 )
+scale = 0.5
+scale_curve = SubResource( 2 )
+
+[sub_resource type="SpatialMaterial" id=4]
+flags_transparent = true
+params_blend_mode = 1
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+albedo_color = Color( 0, 1, 0.952941, 1 )
+albedo_texture = ExtResource( 8 )
+emission_enabled = true
+emission = Color( 0, 0.941176, 1, 1 )
+emission_energy = 1.0
+emission_operator = 0
+emission_on_uv2 = false
+
+[sub_resource type="QuadMesh" id=5]
+material = SubResource( 4 )
+
+[node name="Spaceship" type="Spatial" groups=["Boid"]]
+process_priority = 1
+script = ExtResource( 1 )
+movementSpeed = 15
+
+[node name="PirateShip" type="MeshInstance" parent="."]
+transform = Transform( -0.5, 0, -4.37114e-08, 0, 0.5, 0, 4.37114e-08, 0, -0.5, 0, 0, 0 )
+mesh = ExtResource( 7 )
+skeleton = NodePath("")
+
+[node name="PositionClamp" type="Spatial" parent="."]
+script = ExtResource( 2 )
+boxSize = 100
+
+[node name="Alignment" type="Spatial" parent="."]
+script = ExtResource( 3 )
+weight = 2.0
+
+[node name="Seperation" type="Spatial" parent="."]
+script = ExtResource( 4 )
+weight = 2.0
+minDistance = 7.0
+maxDistance = 8.0
+
+[node name="Cohesion" type="Spatial" parent="."]
+script = ExtResource( 5 )
+minDistance = 8.0
+maxDistance = 9.0
+
+[node name="AvoidWalls" type="Spatial" parent="."]
+script = ExtResource( 6 )
+weight = 1000.0
+boxSize = 30
+
+[node name="Particles" type="Particles" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.95368, -0.0617674, 1.21704 )
+amount = 16
+lifetime = 0.3
+local_coords = false
+process_material = SubResource( 3 )
+draw_pass_1 = SubResource( 5 )
+
+[node name="Particles2" type="Particles" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.96526, 1.0174, 1.15051 )
+amount = 16
+lifetime = 0.3
+local_coords = false
+process_material = SubResource( 3 )
+draw_pass_1 = SubResource( 5 )
+
+[node name="Particles3" type="Particles" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.55104, -1.0763, 1.15051 )
+amount = 16
+lifetime = 0.3
+local_coords = false
+process_material = SubResource( 3 )
+draw_pass_1 = SubResource( 5 )
