@@ -9,7 +9,7 @@ var area : Area
 
 func _ready():
 	area = get_node(areaPath)
-	assert(area != null, "ShareTargetList requires an area")
+	assert(area != null || !enabled, "ShareTargetList requires an area")
 
 func tick(actor, blackboard):
 	if !enabled: return SUCCESS

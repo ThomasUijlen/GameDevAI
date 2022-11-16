@@ -1,4 +1,4 @@
-class_name SelectTargetsFromGroup, "res://addons/EckiGamesAI/Icons/SpecificDecorator.png"
+class_name SelectTargetsFromGroup, "res://addons/EckiGamesAI/Icons/SpecificSelect.png"
 extends TargetAction
 
 export var groupName = ""

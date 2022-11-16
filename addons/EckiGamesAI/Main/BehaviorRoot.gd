@@ -1,3 +1,3 @@
-class_name BehaviorRoot
+class_name BehaviorRoot, "res://addons/EckiGamesAI/Icons/BehaviorNode.png"
 extends Node
 

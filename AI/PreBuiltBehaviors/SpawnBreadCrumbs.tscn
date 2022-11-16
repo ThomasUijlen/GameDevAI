@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Breadcrumbs/SpawnBreadcrumbs.gd" type="Script" id=1]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Breadcrumbs/TargetBreadCrumbs.gd" type="Script" id=2]
+[ext_resource path="res://addons/EckiGamesAI/Main/Composites/Parallel.gd" type="Script" id=3]
+
+[node name="SpawnBreadCrumbs" type="Node"]
+script = ExtResource( 3 )
+
+[node name="SpawnBreadcrumbs" type="Node" parent="."]
+script = ExtResource( 1 )
+targetName = "RememberedEnemies"
+mode = 1
+crumbsName = "BreadCrumbs"
+
+[node name="TargetBreadcrumbs" type="Node" parent="."]
+script = ExtResource( 2 )
+targetName = "BreadCrumbs"

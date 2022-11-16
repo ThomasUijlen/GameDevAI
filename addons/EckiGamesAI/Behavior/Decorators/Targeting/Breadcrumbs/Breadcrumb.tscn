@@ -1,7 +1,6 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Breadcrumbs/Breadcrumb.gd" type="Script" id=2]
-[ext_resource path="res://Planet/Characters/Age.gd" type="Script" id=3]
 
 [sub_resource type="SphereMesh" id=3]
 radius = 0.1
@@ -33,11 +32,7 @@ tracks/0/keys = {
 [node name="Breadcrumb" type="Spatial"]
 script = ExtResource( 2 )
 
-[node name="Age" type="Node" parent="."]
-script = ExtResource( 3 )
-
 [node name="MeshInstance" type="MeshInstance" parent="."]
-visible = false
 mesh = SubResource( 3 )
 material/0 = SubResource( 4 )
 

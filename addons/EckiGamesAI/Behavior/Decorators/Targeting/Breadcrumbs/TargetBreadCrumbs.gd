@@ -1,7 +1,7 @@
 class_name TargetBreadcrumbs, "res://addons/EckiGamesAI/Icons/Breadcrumbs.png"
 extends TargetAction
 
-export var scanInterval = 60
+export var scanInterval = 1.0
 
 var t = 0.0
 var targetList = null

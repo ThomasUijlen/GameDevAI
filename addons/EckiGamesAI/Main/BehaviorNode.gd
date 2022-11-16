@@ -1,4 +1,4 @@
-class_name BehaviorNode, "res://addons/EckiGamesAI/Icons/BehaviorNode.png"
+class_name BehaviorNode
 extends BehaviorRoot
 
 enum {
