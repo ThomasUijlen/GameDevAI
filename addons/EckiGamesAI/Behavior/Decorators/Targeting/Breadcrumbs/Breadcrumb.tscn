@@ -1,0 +1,46 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Breadcrumbs/Breadcrumb.gd" type="Script" id=2]
+[ext_resource path="res://Planet/Characters/Age.gd" type="Script" id=3]
+
+[sub_resource type="SphereMesh" id=3]
+radius = 0.1
+height = 0.2
+radial_segments = 4
+rings = 1
+
+[sub_resource type="SpatialMaterial" id=4]
+flags_transparent = true
+albedo_color = Color( 0, 1, 1, 0.47451 )
+
+[sub_resource type="Animation" id=5]
+length = 20.0
+tracks/0/type = "method"
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 20 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "expire"
+} ]
+}
+
+[node name="Breadcrumb" type="Spatial"]
+script = ExtResource( 2 )
+
+[node name="Age" type="Node" parent="."]
+script = ExtResource( 3 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+visible = false
+mesh = SubResource( 3 )
+material/0 = SubResource( 4 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Expire"
+anims/Expire = SubResource( 5 )

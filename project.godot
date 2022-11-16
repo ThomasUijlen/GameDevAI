@@ -1,0 +1,355 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "BehaviorNode",
+"class": "AlwaysFail",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Other/AlwaysFail.gd"
+}, {
+"base": "BehaviorNode",
+"class": "AlwaysSucceed",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Other/AlwaysSucceed.gd"
+}, {
+"base": "BehaviorRoot",
+"class": "BehaviorNode",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Main/BehaviorNode.gd"
+}, {
+"base": "Node",
+"class": "BehaviorRoot",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Main/BehaviorRoot.gd"
+}, {
+"base": "BehaviorRoot",
+"class": "BehaviorTree",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Main/BehaviorTree.gd"
+}, {
+"base": "TargetAction",
+"class": "CallFunction",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Actions/Other/CallFunctionOnTarget.gd"
+}, {
+"base": "TargetAction",
+"class": "ClearTargetList",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/ClearTargetList.gd"
+}, {
+"base": "BehaviorNode",
+"class": "Composite",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Main/Composites/Composite.gd"
+}, {
+"base": "BehaviorNode",
+"class": "Cooldown",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Actions/Timing/Cooldown.gd"
+}, {
+"base": "TargetAction",
+"class": "CopyAndInsertTargetList",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/CopyAndInsertTargetList.gd"
+}, {
+"base": "TargetAction",
+"class": "CopyTargetList",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/CopyTargetList.gd"
+}, {
+"base": "TargetAction",
+"class": "DetectTargetsInArea",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/DetectTargetsInArea.gd"
+}, {
+"base": "Spatial",
+"class": "DirectionChooser",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Parts/DirectionChooser.gd"
+}, {
+"base": "Spatial",
+"class": "DirectionRay",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Parts/DirectionRay.gd"
+}, {
+"base": "FilterAction",
+"class": "DistanceFilter",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/DistanceFilter.gd"
+}, {
+"base": "TargetAction",
+"class": "DistanceSortTargetList",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/DistanceSortTargetList.gd"
+}, {
+"base": "TargetAction",
+"class": "ExpireTargetList",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/ExpireTargetList.gd"
+}, {
+"base": "FilterAction",
+"class": "ExpressionFilter",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/ExpressionFilter.gd"
+}, {
+"base": "FilterAction",
+"class": "FOVFilter",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/FOVFilter.gd"
+}, {
+"base": "Node",
+"class": "Faction",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Parts/Faction.gd"
+}, {
+"base": "FilterAction",
+"class": "FactionFilter",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/FactionFilter.gd"
+}, {
+"base": "TargetAction",
+"class": "FilterAction",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/FilterAction.gd"
+}, {
+"base": "TargetAction",
+"class": "GroupWithTargets",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Actions/Movement/GroupWithTargets.gd"
+}, {
+"base": "BehaviorNode",
+"class": "HasBBCondition",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Actions/Other/HasBBCondition.gd"
+}, {
+"base": "TargetAction",
+"class": "HasTarget",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/HasTarget.gd"
+}, {
+"base": "BehaviorNode",
+"class": "Inverter",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Other/Inverter.gd"
+}, {
+"base": "FilterAction",
+"class": "LOSFilter",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/LOSFilter.gd"
+}, {
+"base": "TargetAction",
+"class": "LookAtTarget",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Actions/Movement/LookAtTarget.gd"
+}, {
+"base": "TargetAction",
+"class": "LoopTargets",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/LoopTargets.gd"
+}, {
+"base": "BehaviorNode",
+"class": "MoveToRandomDirection",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Actions/Movement/MoveToRandomDirection.gd"
+}, {
+"base": "TargetAction",
+"class": "MoveToTarget",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Actions/Movement/MoveToTarget.gd"
+}, {
+"base": "Composite",
+"class": "Parallel",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Main/Composites/Parallel.gd"
+}, {
+"base": "TargetAction",
+"class": "RefreshTargetList",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/RefreshTargetList.gd"
+}, {
+"base": "TargetAction",
+"class": "RememberTargets",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/RememberTargets.gd"
+}, {
+"base": "Spatial",
+"class": "Rotator",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Parts/Rotator.gd"
+}, {
+"base": "TargetAction",
+"class": "SelectSpecificTargets",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/SelectSpecificTargets.gd"
+}, {
+"base": "TargetAction",
+"class": "SelectTargetsFromGroup",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/SelectTargetsFromGroup.gd"
+}, {
+"base": "Composite",
+"class": "Selector",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Main/Composites/Selector.gd"
+}, {
+"base": "Composite",
+"class": "Sequence",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Main/Composites/Sequence.gd"
+}, {
+"base": "BehaviorNode",
+"class": "SetBBValue",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Actions/Other/SetBBValue.gd"
+}, {
+"base": "TargetAction",
+"class": "SetRandomTarget",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Actions/Movement/SetRandomTarget.gd"
+}, {
+"base": "TargetAction",
+"class": "ShareTargetList",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Actions/Communication/ShareTargetList.gd"
+}, {
+"base": "TargetAction",
+"class": "ShuffleTargetList",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/ShuffleTargetList.gd"
+}, {
+"base": "FilterAction",
+"class": "SizeFilter",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/SizeFilter.gd"
+}, {
+"base": "TargetAction",
+"class": "SpawnBreadcrumbs",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Breadcrumbs/SpawnBreadcrumbs.gd"
+}, {
+"base": "BehaviorNode",
+"class": "TargetAction",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/TargetAction.gd"
+}, {
+"base": "TargetAction",
+"class": "TargetBreadcrumbs",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Breadcrumbs/TargetBreadCrumbs.gd"
+}, {
+"base": "BehaviorNode",
+"class": "TriggerCooldown",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Actions/Timing/TriggerCooldown.gd"
+} ]
+_global_script_class_icons={
+"AlwaysFail": "res://addons/EckiGamesAI/Icons/AlwaysFail.png",
+"AlwaysSucceed": "res://addons/EckiGamesAI/Icons/AlwaysSucceed.png",
+"BehaviorNode": "res://addons/EckiGamesAI/Icons/BehaviorNode.png",
+"BehaviorRoot": "",
+"BehaviorTree": "res://addons/EckiGamesAI/Icons/Tree.png",
+"CallFunction": "res://addons/EckiGamesAI/Icons/Cog.png",
+"ClearTargetList": "res://addons/EckiGamesAI/Icons/Trash.png",
+"Composite": "res://addons/EckiGamesAI/Icons/Composite.png",
+"Cooldown": "res://addons/EckiGamesAI/Icons/Time.png",
+"CopyAndInsertTargetList": "res://addons/EckiGamesAI/Icons/Duplicate.png",
+"CopyTargetList": "res://addons/EckiGamesAI/Icons/Duplicate.png",
+"DetectTargetsInArea": "res://addons/EckiGamesAI/Icons/Area.png",
+"DirectionChooser": "",
+"DirectionRay": "",
+"DistanceFilter": "res://addons/EckiGamesAI/Icons/Ruler.png",
+"DistanceSortTargetList": "res://addons/EckiGamesAI/Icons/RulerDecorator.png",
+"ExpireTargetList": "res://addons/EckiGamesAI/Icons/Trash.png",
+"ExpressionFilter": "res://addons/EckiGamesAI/Icons/CogFilter.png",
+"FOVFilter": "res://addons/EckiGamesAI/Icons/Eye.png",
+"Faction": "",
+"FactionFilter": "res://addons/EckiGamesAI/Icons/Swords.png",
+"FilterAction": "res://addons/EckiGamesAI/Icons/Filter.png",
+"GroupWithTargets": "res://addons/EckiGamesAI/Icons/MoveIcon.png",
+"HasBBCondition": "res://addons/EckiGamesAI/Icons/QuestionMark.png",
+"HasTarget": "res://addons/EckiGamesAI/Icons/QuestionMark.png",
+"Inverter": "res://addons/EckiGamesAI/Icons/Inverter.png",
+"LOSFilter": "res://addons/EckiGamesAI/Icons/Eye.png",
+"LookAtTarget": "res://addons/EckiGamesAI/Icons/EyeAction.png",
+"LoopTargets": "res://addons/EckiGamesAI/Icons/LoopDecorator.png",
+"MoveToRandomDirection": "res://addons/EckiGamesAI/Icons/MoveIcon.png",
+"MoveToTarget": "res://addons/EckiGamesAI/Icons/MoveIcon.png",
+"Parallel": "res://addons/EckiGamesAI/Icons/Parallel.png",
+"RefreshTargetList": "res://addons/EckiGamesAI/Icons/LoopDecorator.png",
+"RememberTargets": "res://addons/EckiGamesAI/Icons/Memory.png",
+"Rotator": "",
+"SelectSpecificTargets": "res://addons/EckiGamesAI/Icons/SpecificDecorator.png",
+"SelectTargetsFromGroup": "res://addons/EckiGamesAI/Icons/SpecificDecorator.png",
+"Selector": "res://addons/EckiGamesAI/Icons/Selector.png",
+"Sequence": "res://addons/EckiGamesAI/Icons/Sequence.png",
+"SetBBValue": "res://addons/EckiGamesAI/Icons/Cog.png",
+"SetRandomTarget": "res://addons/EckiGamesAI/Icons/Random.png",
+"ShareTargetList": "res://addons/EckiGamesAI/Icons/Communication.png",
+"ShuffleTargetList": "res://addons/EckiGamesAI/Icons/Random.png",
+"SizeFilter": "res://addons/EckiGamesAI/Icons/SizeFilter.png",
+"SpawnBreadcrumbs": "res://addons/EckiGamesAI/Icons/Breadcrumbs.png",
+"TargetAction": "res://addons/EckiGamesAI/Icons/Decorator.png",
+"TargetBreadcrumbs": "res://addons/EckiGamesAI/Icons/Breadcrumbs.png",
+"TriggerCooldown": "res://addons/EckiGamesAI/Icons/Time.png"
+}
+
+[application]
+
+config/name="Game Dev Ai"
+run/main_scene="res://Scenes/Main/Main.tscn"
+config/icon="res://icon.png"
+
+[display]
+
+window/size/fullscreen=true
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/EckiGamesAI/plugin.cfg" )
+
+[gui]
+
+common/drop_mouse_on_gui_input_disabled=true
+
+[input]
+
+Up={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":87,"unicode":0,"echo":false,"script":null)
+ ]
+}
+Down={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":83,"unicode":0,"echo":false,"script":null)
+ ]
+}
+Left={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":65,"unicode":0,"echo":false,"script":null)
+ ]
+}
+Right={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":68,"unicode":0,"echo":false,"script":null)
+ ]
+}
+
+[mono]
+
+project/assembly_name="Game Dev Ai"
+
+[physics]
+
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+quality/shadows/filter_mode=2
+environment/default_environment="res://default_env.tres"

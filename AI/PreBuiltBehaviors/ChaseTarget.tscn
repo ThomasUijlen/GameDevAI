@@ -1,0 +1,45 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://addons/EckiGamesAI/Main/Composites/Sequence.gd" type="Script" id=1]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/CopyTargetList.gd" type="Script" id=2]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/FOVFilter.gd" type="Script" id=3]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/LOSFilter.gd" type="Script" id=4]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/DistanceFilter.gd" type="Script" id=5]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/HasTarget.gd" type="Script" id=6]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Movement/MoveToTarget.gd" type="Script" id=7]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Movement/LookAtTarget.gd" type="Script" id=8]
+
+[node name="ChaseTarget" type="Node"]
+script = ExtResource( 1 )
+
+[node name="CopyTargetList" type="Node" parent="."]
+script = ExtResource( 2 )
+targetName = "ChaseEnemies"
+
+[node name="FOVFilter" type="Node" parent="."]
+script = ExtResource( 3 )
+targetName = "ChaseEnemies"
+
+[node name="LOSFilter" type="Node" parent="."]
+script = ExtResource( 4 )
+targetName = "ChaseEnemies"
+
+[node name="RayCast" type="RayCast" parent="LOSFilter"]
+cast_to = Vector3( 0, 0, 0 )
+collision_mask = 9216
+
+[node name="DistanceFilter" type="Node" parent="."]
+script = ExtResource( 5 )
+targetName = "ChaseEnemies"
+
+[node name="HasTarget" type="Node" parent="."]
+script = ExtResource( 6 )
+targetName = "ChaseEnemies"
+
+[node name="MoveToTarget" type="Node" parent="."]
+script = ExtResource( 7 )
+targetName = "ChaseEnemies"
+
+[node name="LookAtTarget" type="Node" parent="."]
+script = ExtResource( 8 )
+targetName = "ChaseEnemies"

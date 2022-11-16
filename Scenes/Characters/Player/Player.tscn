@@ -1,0 +1,78 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Scenes/Characters/CharacterController.gd" type="Script" id=1]
+[ext_resource path="res://addons/EckiGamesAI/Parts/Faction.gd" type="Script" id=2]
+
+[sub_resource type="CapsuleShape" id=1]
+radius = 0.5
+
+[sub_resource type="CapsuleMesh" id=4]
+radius = 0.5
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Node
+
+export var sensitivity = 1.0
+
+func _ready():
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+func _input(event):
+	if event is InputEventMouseMotion:
+		var movement : Vector2 = event.relative
+		
+		get_parent().get_node(\"Body\").rotation.y -= movement.x * sensitivity
+		get_parent().get_node(\"Body/Head\").rotation.x -= movement.y * sensitivity * 0.7
+		
+		get_parent().get_node(\"Body/Head\").rotation.x = clamp(get_parent().get_node(\"Body/Head\").rotation.x, -PI/2, PI/2)
+"
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Node
+
+func _process(delta):
+	var direction = Vector3.ZERO
+	
+	if Input.is_action_pressed(\"Up\"):
+		direction.z -= 1
+	if Input.is_action_pressed(\"Down\"):
+		direction.z += 1
+	if Input.is_action_pressed(\"Left\"):
+		direction.x -= 1
+	if Input.is_action_pressed(\"Right\"):
+		direction.x += 1
+	
+	get_parent().setDirection3D(direction)
+"
+
+[node name="Player" type="Spatial"]
+
+[node name="KinematicBody" type="KinematicBody" parent="."]
+collision_layer = 8193
+script = ExtResource( 1 )
+
+[node name="Faction" type="Node" parent="KinematicBody"]
+script = ExtResource( 2 )
+factionName = "Player"
+
+[node name="CollisionShape" type="CollisionShape" parent="KinematicBody"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0 )
+shape = SubResource( 1 )
+
+[node name="Body" type="Spatial" parent="KinematicBody"]
+
+[node name="Head" type="Spatial" parent="KinematicBody/Body"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.605781, 0 )
+
+[node name="Camera" type="Camera" parent="KinematicBody/Body/Head"]
+
+[node name="MeshInstance" type="MeshInstance" parent="KinematicBody/Body"]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0 )
+mesh = SubResource( 4 )
+
+[node name="Rotation" type="Node" parent="KinematicBody"]
+script = SubResource( 3 )
+sensitivity = 0.01
+
+[node name="Movement" type="Node" parent="KinematicBody"]
+script = SubResource( 2 )

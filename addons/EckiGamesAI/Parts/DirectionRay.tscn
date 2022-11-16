@@ -1,0 +1,57 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://addons/EckiGamesAI/Parts/DirectionRay.gd" type="Script" id=4]
+
+[sub_resource type="CubeMesh" id=1]
+size = Vector3( 0.1, 0.1, 1.5 )
+
+[sub_resource type="SpatialMaterial" id=2]
+flags_transparent = true
+albedo_color = Color( 0.101961, 1, 0, 0.47451 )
+
+[sub_resource type="SpatialMaterial" id=3]
+flags_transparent = true
+albedo_color = Color( 1, 0, 0, 0.47451 )
+
+[sub_resource type="SpatialMaterial" id=4]
+flags_transparent = true
+albedo_color = Color( 0, 1, 1, 0.47451 )
+
+[node name="DirectionRay" type="Spatial"]
+process_priority = -1
+script = ExtResource( 4 )
+
+[node name="Rays" type="Spatial" parent="."]
+
+[node name="RayCast" type="RayCast" parent="Rays"]
+cast_to = Vector3( 0, 0, -1 )
+collision_mask = 8192
+
+[node name="RayCast2" type="RayCast" parent="Rays"]
+transform = Transform( 0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 0, 0, 0 )
+cast_to = Vector3( 0, 0, -1 )
+collision_mask = 8192
+
+[node name="RayCast3" type="RayCast" parent="Rays"]
+transform = Transform( 0.866025, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866025, 0, 0, 0 )
+cast_to = Vector3( 0, 0, -1 )
+collision_mask = 8192
+
+[node name="Debugging" type="Spatial" parent="."]
+
+[node name="Green" type="MeshInstance" parent="Debugging"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.75 )
+mesh = SubResource( 1 )
+material/0 = SubResource( 2 )
+
+[node name="Red" type="MeshInstance" parent="Debugging"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.75 )
+visible = false
+mesh = SubResource( 1 )
+material/0 = SubResource( 3 )
+
+[node name="Blue" type="MeshInstance" parent="Debugging"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.75 )
+visible = false
+mesh = SubResource( 1 )
+material/0 = SubResource( 4 )

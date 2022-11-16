@@ -1,0 +1,102 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Scenes/Characters/Player/Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Scenes/Characters/Enemy/Enemy.tscn" type="PackedScene" id=2]
+
+[sub_resource type="PlaneMesh" id=1]
+size = Vector2( 10, 10 )
+
+[sub_resource type="ConcavePolygonShape" id=2]
+data = PoolVector3Array( 5, 0, 5, -5, 0, 5, 5, 0, -5, -5, 0, 5, -5, 0, -5, 5, 0, -5 )
+
+[sub_resource type="ProceduralSky" id=3]
+
+[sub_resource type="Environment" id=4]
+background_mode = 2
+background_sky = SubResource( 3 )
+
+[sub_resource type="CubeMesh" id=5]
+size = Vector3( 0.1, 2, 0.1 )
+
+[sub_resource type="SpatialMaterial" id=6]
+albedo_color = Color( 0.317647, 0.317647, 0.317647, 1 )
+
+[sub_resource type="PrismMesh" id=7]
+size = Vector3( 0.5, 0.5, 0.038 )
+
+[sub_resource type="SpatialMaterial" id=8]
+albedo_color = Color( 0.8, 0.352941, 0.352941, 1 )
+
+[node name="Main" type="Spatial"]
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.06235, 0 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 5, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0 )
+mesh = SubResource( 1 )
+
+[node name="StaticBody" type="StaticBody" parent="MeshInstance"]
+
+[node name="CollisionShape" type="CollisionShape" parent="MeshInstance/StaticBody"]
+shape = SubResource( 2 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0 )
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 4 )
+
+[node name="Enemy" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.13736, -2.02039 )
+
+[node name="PatrolPoints" type="Spatial" parent="."]
+
+[node name="1" type="Spatial" parent="PatrolPoints" groups=["PatrolPoint"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6.31878, 0, -9.20388 )
+
+[node name="MeshInstance" type="MeshInstance" parent="PatrolPoints/1"]
+mesh = SubResource( 5 )
+material/0 = SubResource( 6 )
+
+[node name="MeshInstance2" type="MeshInstance" parent="PatrolPoints/1"]
+transform = Transform( -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0.256439, 0.736254, 0 )
+mesh = SubResource( 7 )
+material/0 = SubResource( 8 )
+
+[node name="2" type="Spatial" parent="PatrolPoints" groups=["PatrolPoint"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 13.0187, 0, -9.20388 )
+
+[node name="MeshInstance" type="MeshInstance" parent="PatrolPoints/2"]
+mesh = SubResource( 5 )
+material/0 = SubResource( 6 )
+
+[node name="MeshInstance2" type="MeshInstance" parent="PatrolPoints/2"]
+transform = Transform( -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0.256439, 0.736254, 0 )
+mesh = SubResource( 7 )
+material/0 = SubResource( 8 )
+
+[node name="3" type="Spatial" parent="PatrolPoints" groups=["PatrolPoint"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.84207, 0, 10.6362 )
+
+[node name="MeshInstance" type="MeshInstance" parent="PatrolPoints/3"]
+mesh = SubResource( 5 )
+material/0 = SubResource( 6 )
+
+[node name="MeshInstance2" type="MeshInstance" parent="PatrolPoints/3"]
+transform = Transform( -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0.256439, 0.736254, 0 )
+mesh = SubResource( 7 )
+material/0 = SubResource( 8 )
+
+[node name="4" type="Spatial" parent="PatrolPoints" groups=["PatrolPoint"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5406, 0, 4.11639 )
+
+[node name="MeshInstance" type="MeshInstance" parent="PatrolPoints/4"]
+mesh = SubResource( 5 )
+material/0 = SubResource( 6 )
+
+[node name="MeshInstance2" type="MeshInstance" parent="PatrolPoints/4"]
+transform = Transform( -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0.256439, 0.736254, 0 )
+mesh = SubResource( 7 )
+material/0 = SubResource( 8 )
