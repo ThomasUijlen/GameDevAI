@@ -37,9 +37,12 @@ func tick(actor, blackboard):
 	
 	return SUCCESS
 
+func deleteCrumb(crumb):
+	crumbList.erase(crumb)
+
 func spawnBreadcrumb(position):
 	var breadcrumb = breadcrumbScene.instance()
 	crumbList.push_front(breadcrumb)
-	breadcrumb.crumbList = crumbList
+	breadcrumb.crumbSpawner = self
 	get_tree().current_scene.add_child(breadcrumb)
 	breadcrumb.global_transform.origin = position

@@ -1,7 +1,6 @@
-class_name CallFunction, "res://addons/EckiGamesAI/Icons/Cog.png"
+class_name CallFunctionOnTarget, "res://addons/EckiGamesAI/Icons/Cog.png"
 extends TargetAction
 
-export var nodePath : NodePath
 export var functionName = ""
 export var parameters : Array
 
@@ -18,6 +17,12 @@ func tick(actor, blackboard):
 	if parameters.empty():
 		target.call(functionName)
 	else:
+		var parameters = self.parameters.duplicate()
+		for i in range(parameters.size()):
+			var value = parameters[i]
+			if value is NodePath:
+				parameters[i] = get_node(value)
+		
 		target.callv(functionName, parameters)
 	
 	return SUCCESS

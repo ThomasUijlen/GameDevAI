@@ -1,4 +1,4 @@
 extends Spatial
 
-func grab(actor):
-	print("grab")
+func grab(weaponController):
+	weaponController.equip(self)

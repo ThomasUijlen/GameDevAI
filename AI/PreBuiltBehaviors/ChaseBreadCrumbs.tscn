@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/HasTarget.gd" type="Script" id=1]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/CopyTargetList.gd" type="Script" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/LOSFilter.gd" type="Script" id=4]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Movement/MoveToTarget.gd" type="Script" id=5]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Movement/LookAtTarget.gd" type="Script" id=6]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/ValidInstanceFilter.gd" type="Script" id=7]
 
 [node name="ChaseBreadCrumbs" type="Node"]
 script = ExtResource( 3 )
@@ -18,6 +19,10 @@ targetName = "BreadCrumbs"
 script = ExtResource( 2 )
 targetName = "VisibleCrumbs"
 groupToCopy = "BreadCrumbs"
+
+[node name="ValidInstanceFilter" type="Node" parent="."]
+script = ExtResource( 7 )
+targetName = "VisibleCrumbs"
 
 [node name="LOSFilter" type="Node" parent="."]
 script = ExtResource( 4 )

@@ -1,7 +1,8 @@
 extends Spatial
 
-var crumbList : Array
+var crumbSpawner
 
 func expire():
-	crumbList.erase(self)
+	if is_instance_valid(crumbSpawner):
+		crumbSpawner.deleteCrumb(self)
 	queue_free()

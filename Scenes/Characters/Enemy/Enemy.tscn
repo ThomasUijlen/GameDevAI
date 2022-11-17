@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=34 format=2]
 
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionChooser.gd" type="Script" id=1]
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionMover.gd" type="Script" id=2]
@@ -17,6 +17,17 @@
 [ext_resource path="res://AI/PreBuiltBehaviors/RememberEnemiesSequence.tscn" type="PackedScene" id=15]
 [ext_resource path="res://AI/PreBuiltBehaviors/ChaseBreadCrumbs.tscn" type="PackedScene" id=16]
 [ext_resource path="res://AI/PreBuiltBehaviors/SpawnBreadCrumbs.tscn" type="PackedScene" id=17]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Other/HasBBCondition.gd" type="Script" id=18]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Other/Inverter.gd" type="Script" id=19]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/DetectTargetsInArea.gd" type="Script" id=20]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/DistanceSortTargetList.gd" type="Script" id=21]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/CopyTargetList.gd" type="Script" id=22]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/DistanceFilter.gd" type="Script" id=23]
+[ext_resource path="res://addons/EckiGamesAI/Main/Composites/Parallel.gd" type="Script" id=24]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Other/CallFunctionOnTarget.gd" type="Script" id=25]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/ClearTargetList.gd" type="Script" id=26]
+[ext_resource path="res://Scenes/Weapons/WeaponController.tscn" type="PackedScene" id=27]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Other/CallFunction.gd" type="Script" id=28]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.5
@@ -36,12 +47,12 @@ emission_operator = 0
 emission_on_uv2 = false
 
 [sub_resource type="SphereShape" id=5]
-radius = 15.0
+radius = 30.0
 
 [node name="Enemy" type="Spatial"]
 
 [node name="KinematicBody" type="KinematicBody" parent="."]
-collision_layer = 8193
+collision_layer = 12289
 script = ExtResource( 3 )
 movementSpeed = 2
 localMovement = false
@@ -70,6 +81,8 @@ transform = Transform( 0.836516, 0.224144, 0.5, -0.258819, 0.965926, 0, -0.48296
 mesh = SubResource( 3 )
 material/0 = SubResource( 4 )
 
+[node name="WeaponController" parent="KinematicBody/Body" instance=ExtResource( 27 )]
+
 [node name="DirectionMover" type="Spatial" parent="KinematicBody"]
 script = ExtResource( 2 )
 
@@ -83,10 +96,18 @@ rotationSpeed = 2.0
 
 [node name="Area" type="Area" parent="KinematicBody"]
 collision_layer = 0
-collision_mask = 8192
+collision_mask = 4096
 monitorable = false
 
 [node name="CollisionShape" type="CollisionShape" parent="KinematicBody/Area"]
+shape = SubResource( 5 )
+
+[node name="Area2" type="Area" parent="KinematicBody"]
+collision_layer = 0
+collision_mask = 16384
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape" parent="KinematicBody/Area2"]
 shape = SubResource( 5 )
 
 [node name="BehaviorTree" type="Node" parent="."]
@@ -105,32 +126,136 @@ areaPath = NodePath("../../../../KinematicBody/Area")
 
 [node name="SpawnBreadCrumbs" parent="BehaviorTree/Sequence" instance=ExtResource( 17 )]
 
+[node name="DetectWeapons" type="Node" parent="BehaviorTree/Sequence"]
+script = ExtResource( 9 )
+
+[node name="DetectTargetsInArea" type="Node" parent="BehaviorTree/Sequence/DetectWeapons"]
+script = ExtResource( 20 )
+targetName = "Weapons"
+areaPath = NodePath("../../../../KinematicBody/Area2")
+
+[node name="DistanceSortTargetList" type="Node" parent="BehaviorTree/Sequence/DetectWeapons"]
+script = ExtResource( 21 )
+targetName = "Weapons"
+
 [node name="Selector" type="Node" parent="BehaviorTree/Sequence"]
 script = ExtResource( 7 )
 
-[node name="Sequence" type="Node" parent="BehaviorTree/Sequence/Selector"]
+[node name="HasEnemy" type="Node" parent="BehaviorTree/Sequence/Selector"]
+script = ExtResource( 7 )
+
+[node name="FindWeapon" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy"]
 script = ExtResource( 9 )
 
-[node name="HasTarget" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence"]
+[node name="HasTarget2" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/FindWeapon"]
+script = ExtResource( 13 )
+targetName = "RememberedEnemies"
+
+[node name="Inverter" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/FindWeapon"]
+script = ExtResource( 19 )
+
+[node name="HasBBCondition" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/FindWeapon/Inverter"]
+script = ExtResource( 18 )
+expression = "blackboard.get(\"Weapon\") != null"
+
+[node name="HasTarget" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/FindWeapon"]
+script = ExtResource( 13 )
+targetName = "Weapons"
+
+[node name="MoveToTarget" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/FindWeapon"]
+script = ExtResource( 12 )
+targetName = "Weapons"
+directionChooserPath = NodePath("../../../../../../KinematicBody/DirectionMover/DirectionChooser")
+
+[node name="LookAtTarget" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/FindWeapon"]
+script = ExtResource( 14 )
+targetName = "Weapons"
+rotatorPath = NodePath("../../../../../../KinematicBody/Rotator")
+
+[node name="GrabWeapon" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/FindWeapon"]
+script = ExtResource( 24 )
+
+[node name="Sequence" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/FindWeapon/GrabWeapon"]
+script = ExtResource( 9 )
+
+[node name="CopyTargetList" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/FindWeapon/GrabWeapon/Sequence"]
+script = ExtResource( 22 )
+targetName = "CloseWeapons"
+groupToCopy = "Weapons"
+
+[node name="DistanceFilter" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/FindWeapon/GrabWeapon/Sequence"]
+script = ExtResource( 23 )
+targetName = "CloseWeapons"
+distance = 2.0
+
+[node name="HasTarget" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/FindWeapon/GrabWeapon/Sequence"]
+script = ExtResource( 13 )
+targetName = "CloseWeapons"
+
+[node name="CallFunctionOnTarget" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/FindWeapon/GrabWeapon/Sequence"]
+script = ExtResource( 25 )
+targetName = "CloseWeapons"
+functionName = "grab"
+parameters = [ NodePath("../../../../../../../../KinematicBody/Body/WeaponController") ]
+
+[node name="ClearTargetList" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/FindWeapon/GrabWeapon/Sequence"]
+script = ExtResource( 26 )
+targetName = "Weapons"
+
+[node name="ClearTargetList2" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/FindWeapon/GrabWeapon/Sequence"]
+script = ExtResource( 26 )
+targetName = "CloseWeapons"
+
+[node name="AttackEnemy" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy"]
+script = ExtResource( 9 )
+
+[node name="HasTarget" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/AttackEnemy"]
 script = ExtResource( 13 )
 targetName = "VisibleEnemies"
 
-[node name="MoveToTarget" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence"]
+[node name="CopyTargetList" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/AttackEnemy"]
+script = ExtResource( 22 )
+targetName = "CloseEnemies"
+groupToCopy = "VisibleEnemies"
+
+[node name="DistanceFilter" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/AttackEnemy"]
+script = ExtResource( 23 )
+targetName = "CloseEnemies"
+distance = 2.0
+
+[node name="LookAtTarget" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/AttackEnemy"]
+script = ExtResource( 14 )
+targetName = "CloseEnemies"
+rotatorPath = NodePath("../../../../../../KinematicBody/Rotator")
+
+[node name="CallFunction" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/AttackEnemy"]
+script = ExtResource( 28 )
+nodePath = NodePath("../../../../../../KinematicBody/Body/WeaponController")
+functionName = "attack"
+
+[node name="ChaseEnemy" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy"]
+script = ExtResource( 9 )
+
+[node name="HasTarget" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/ChaseEnemy"]
+script = ExtResource( 13 )
+targetName = "VisibleEnemies"
+
+[node name="MoveToTarget" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/ChaseEnemy"]
 script = ExtResource( 12 )
 targetName = "VisibleEnemies"
-directionChooserPath = NodePath("../../../../../KinematicBody/DirectionMover/DirectionChooser")
+directionChooserPath = NodePath("../../../../../../KinematicBody/DirectionMover/DirectionChooser")
 
-[node name="LookAtTarget" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence"]
+[node name="LookAtTarget" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/ChaseEnemy"]
 script = ExtResource( 14 )
 targetName = "VisibleEnemies"
-rotatorPath = NodePath("../../../../../KinematicBody/Rotator")
+rotatorPath = NodePath("../../../../../../KinematicBody/Rotator")
 
 [node name="ChaseBreadCrumbs" parent="BehaviorTree/Sequence/Selector" instance=ExtResource( 16 )]
 
-[node name="MoveToTarget" parent="BehaviorTree/Sequence/Selector/ChaseBreadCrumbs" index="4"]
+[node name="MoveToTarget" parent="BehaviorTree/Sequence/Selector/ChaseBreadCrumbs" index="5"]
 directionChooserPath = NodePath("../../../../../KinematicBody/DirectionMover/DirectionChooser")
 
-[node name="LookAtTarget" parent="BehaviorTree/Sequence/Selector/ChaseBreadCrumbs" index="5"]
+[node name="LookAtTarget" parent="BehaviorTree/Sequence/Selector/ChaseBreadCrumbs" index="6"]
 rotatorPath = NodePath("../../../../../KinematicBody/Rotator")
 
 [node name="PatrolSequence" parent="BehaviorTree/Sequence/Selector" instance=ExtResource( 8 )]

@@ -24,6 +24,7 @@ func tick(actor, blackboard):
 	
 	if targetList == null:
 		targetList = area.get_overlapping_bodies()
+		targetList.append_array(area.get_overlapping_areas())
 		if targetList.has(actor): targetList.erase(actor)
 		blackboard.set("TargetList", targetList, targetName)
 		blackboard.set("TargetNew", true, targetName)

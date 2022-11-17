@@ -15,6 +15,12 @@ func tick(actor, blackboard):
 	if parameters.empty():
 		node.call(functionName)
 	else:
+		var parameters = self.parameters.duplicate()
+		for i in range(parameters.size()):
+			var value = parameters[i]
+			if value is NodePath:
+				parameters[i] = get_node(value)
+		
 		node.callv(functionName, parameters)
 	
 	return SUCCESS
