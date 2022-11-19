@@ -44,6 +44,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/EckiGamesAI/Behavior/Actions/Other/CallFunctionOnTarget.gd"
 }, {
+"base": "KinematicBody",
+"class": "CharacterController",
+"language": "GDScript",
+"path": "res://Scenes/Characters/CharacterController.gd"
+}, {
+"base": "TargetAction",
+"class": "ClearFirstTarget",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/ClearFirstTarget.gd"
+}, {
 "base": "TargetAction",
 "class": "ClearTargetList",
 "language": "GDScript",
@@ -267,6 +277,8 @@ _global_script_class_icons={
 "BehaviorTree": "res://addons/EckiGamesAI/Icons/Tree.png",
 "CallFunction": "res://addons/EckiGamesAI/Icons/Cog.png",
 "CallFunctionOnTarget": "res://addons/EckiGamesAI/Icons/Cog.png",
+"CharacterController": "",
+"ClearFirstTarget": "res://addons/EckiGamesAI/Icons/Trash.png",
 "ClearTargetList": "res://addons/EckiGamesAI/Icons/Trash.png",
 "Composite": "res://addons/EckiGamesAI/Icons/Composite.png",
 "Cooldown": "res://addons/EckiGamesAI/Icons/Time.png",

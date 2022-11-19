@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=2]
+[gd_scene load_steps=37 format=2]
 
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionChooser.gd" type="Script" id=1]
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionMover.gd" type="Script" id=2]
@@ -9,7 +9,7 @@
 [ext_resource path="res://addons/EckiGamesAI/Main/Composites/Selector.gd" type="Script" id=7]
 [ext_resource path="res://AI/PreBuiltBehaviors/PatrolSequence.tscn" type="PackedScene" id=8]
 [ext_resource path="res://addons/EckiGamesAI/Main/Composites/Sequence.gd" type="Script" id=9]
-[ext_resource path="res://AI/PreBuiltBehaviors/EnemyDetection.tscn" type="PackedScene" id=10]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/FOVFilter.gd" type="Script" id=10]
 [ext_resource path="res://addons/EckiGamesAI/Parts/Faction.gd" type="Script" id=11]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Movement/MoveToTarget.gd" type="Script" id=12]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/HasTarget.gd" type="Script" id=13]
@@ -28,6 +28,9 @@
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/ClearTargetList.gd" type="Script" id=26]
 [ext_resource path="res://Scenes/Weapons/WeaponController.tscn" type="PackedScene" id=27]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Other/CallFunction.gd" type="Script" id=28]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/FactionFilter.gd" type="Script" id=29]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/LOSFilter.gd" type="Script" id=30]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/SelectTargetsFromGroup.gd" type="Script" id=31]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.5
@@ -94,14 +97,6 @@ script = ExtResource( 6 )
 nodeToRotate = NodePath("../Body")
 rotationSpeed = 2.0
 
-[node name="Area" type="Area" parent="KinematicBody"]
-collision_layer = 0
-collision_mask = 4096
-monitorable = false
-
-[node name="CollisionShape" type="CollisionShape" parent="KinematicBody/Area"]
-shape = SubResource( 5 )
-
 [node name="Area2" type="Area" parent="KinematicBody"]
 collision_layer = 0
 collision_mask = 16384
@@ -117,10 +112,36 @@ actor_node_path = NodePath("../KinematicBody")
 [node name="Sequence" type="Node" parent="BehaviorTree"]
 script = ExtResource( 9 )
 
-[node name="EnemyDetection" parent="BehaviorTree/Sequence" instance=ExtResource( 10 )]
+[node name="EnemyDetection" type="Node" parent="BehaviorTree/Sequence"]
+script = ExtResource( 9 )
 
-[node name="DetectTargetsInArea" parent="BehaviorTree/Sequence/EnemyDetection" index="0"]
-areaPath = NodePath("../../../../KinematicBody/Area")
+[node name="SelectTargetsFromGroup" type="Node" parent="BehaviorTree/Sequence/EnemyDetection"]
+script = ExtResource( 31 )
+targetName = "NearbyEnemies"
+groupName = "Player"
+
+[node name="FactionFilter" type="Node" parent="BehaviorTree/Sequence/EnemyDetection"]
+script = ExtResource( 29 )
+targetName = "NearbyEnemies"
+
+[node name="CopyTargetList" type="Node" parent="BehaviorTree/Sequence/EnemyDetection"]
+script = ExtResource( 22 )
+targetName = "VisibleEnemies"
+groupToCopy = "NearbyEnemies"
+
+[node name="FOVFilter" type="Node" parent="BehaviorTree/Sequence/EnemyDetection"]
+script = ExtResource( 10 )
+targetName = "VisibleEnemies"
+fov = 60.0
+
+[node name="LOSFilter" type="Node" parent="BehaviorTree/Sequence/EnemyDetection"]
+script = ExtResource( 30 )
+targetName = "VisibleEnemies"
+extraHeight = 0.5
+
+[node name="RayCast" type="RayCast" parent="BehaviorTree/Sequence/EnemyDetection/LOSFilter"]
+cast_to = Vector3( 0, 0, 0 )
+collision_mask = 9216
 
 [node name="RememberEnemiesSequence" parent="BehaviorTree/Sequence" instance=ExtResource( 15 )]
 
@@ -233,6 +254,11 @@ script = ExtResource( 28 )
 nodePath = NodePath("../../../../../../KinematicBody/Body/WeaponController")
 functionName = "attack"
 
+[node name="CallFunctionOnTarget" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy/AttackEnemy"]
+script = ExtResource( 25 )
+targetName = "CloseEnemies"
+functionName = "attacked"
+
 [node name="ChaseEnemy" type="Node" parent="BehaviorTree/Sequence/Selector/HasEnemy"]
 script = ExtResource( 9 )
 
@@ -276,7 +302,6 @@ directionChooserPath = NodePath("../../../../../../KinematicBody/DirectionMover/
 [node name="LookAtTarget" parent="BehaviorTree/Sequence/Selector/RandomWander/Wander" index="1"]
 rotatorPath = NodePath("../../../../../../KinematicBody/Rotator")
 
-[editable path="BehaviorTree/Sequence/EnemyDetection"]
 [editable path="BehaviorTree/Sequence/Selector/ChaseBreadCrumbs"]
 [editable path="BehaviorTree/Sequence/Selector/PatrolSequence"]
 [editable path="BehaviorTree/Sequence/Selector/RandomWander"]

@@ -1,3 +1,4 @@
+class_name CharacterController
 extends KinematicBody
 
 export var movementSpeed = 3

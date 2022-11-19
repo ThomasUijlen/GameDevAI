@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://Scenes/Characters/CharacterController.gd" type="Script" id=1]
+[ext_resource path="res://Scenes/Characters/Player/Player.gd" type="Script" id=1]
 [ext_resource path="res://addons/EckiGamesAI/Parts/Faction.gd" type="Script" id=2]
 
 [sub_resource type="CapsuleShape" id=1]
@@ -47,7 +47,7 @@ func _process(delta):
 
 [node name="Player" type="Spatial"]
 
-[node name="KinematicBody" type="KinematicBody" parent="."]
+[node name="KinematicBody" type="KinematicBody" parent="." groups=["Player"]]
 collision_layer = 12289
 script = ExtResource( 1 )
 

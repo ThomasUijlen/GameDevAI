@@ -10,8 +10,8 @@ var targetList = null
 var area : Area
 
 func _ready():
-	area = get_node(areaPath)
-	assert(area != null, "DetectTargetsInArea needs an Area")
+	area = get_node_or_null(areaPath)
+	assert(area != null || !enabled, "DetectTargetsInArea needs an Area")
 	t = rand_range(0.0,scanInterval)
 
 func tick(actor, blackboard):

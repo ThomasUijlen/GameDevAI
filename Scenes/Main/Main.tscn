@@ -1,8 +1,9 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://Scenes/Characters/Player/Player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Scenes/Characters/Enemy/Enemy.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Scenes/Weapons/Sword/Sword.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Scenes/Characters/Ally/Ally.tscn" type="PackedScene" id=4]
 
 [sub_resource type="PlaneMesh" id=1]
 size = Vector2( 10, 10 )
@@ -30,10 +31,13 @@ size = Vector3( 0.5, 0.5, 0.038 )
 albedo_color = Color( 0.8, 0.352941, 0.352941, 1 )
 
 [sub_resource type="CubeMesh" id=9]
-size = Vector3( 10, 5, 1 )
+size = Vector3( 1, 5, 1 )
 
-[sub_resource type="ConcavePolygonShape" id=10]
-data = PoolVector3Array( -5, 2.5, 0.5, 5, 2.5, 0.5, -5, -2.5, 0.5, 5, 2.5, 0.5, 5, -2.5, 0.5, -5, -2.5, 0.5, 5, 2.5, -0.5, -5, 2.5, -0.5, 5, -2.5, -0.5, -5, 2.5, -0.5, -5, -2.5, -0.5, 5, -2.5, -0.5, 5, 2.5, 0.5, 5, 2.5, -0.5, 5, -2.5, 0.5, 5, 2.5, -0.5, 5, -2.5, -0.5, 5, -2.5, 0.5, -5, 2.5, -0.5, -5, 2.5, 0.5, -5, -2.5, -0.5, -5, 2.5, 0.5, -5, -2.5, 0.5, -5, -2.5, -0.5, 5, 2.5, 0.5, -5, 2.5, 0.5, 5, 2.5, -0.5, -5, 2.5, 0.5, -5, 2.5, -0.5, 5, 2.5, -0.5, -5, -2.5, 0.5, 5, -2.5, 0.5, -5, -2.5, -0.5, 5, -2.5, 0.5, 5, -2.5, -0.5, -5, -2.5, -0.5 )
+[sub_resource type="ConcavePolygonShape" id=12]
+data = PoolVector3Array( -0.5, 2.5, 0.5, 0.5, 2.5, 0.5, -0.5, -2.5, 0.5, 0.5, 2.5, 0.5, 0.5, -2.5, 0.5, -0.5, -2.5, 0.5, 0.5, 2.5, -0.5, -0.5, 2.5, -0.5, 0.5, -2.5, -0.5, -0.5, 2.5, -0.5, -0.5, -2.5, -0.5, 0.5, -2.5, -0.5, 0.5, 2.5, 0.5, 0.5, 2.5, -0.5, 0.5, -2.5, 0.5, 0.5, 2.5, -0.5, 0.5, -2.5, -0.5, 0.5, -2.5, 0.5, -0.5, 2.5, -0.5, -0.5, 2.5, 0.5, -0.5, -2.5, -0.5, -0.5, 2.5, 0.5, -0.5, -2.5, 0.5, -0.5, -2.5, -0.5, 0.5, 2.5, 0.5, -0.5, 2.5, 0.5, 0.5, 2.5, -0.5, -0.5, 2.5, 0.5, -0.5, 2.5, -0.5, 0.5, 2.5, -0.5, -0.5, -2.5, 0.5, 0.5, -2.5, 0.5, -0.5, -2.5, -0.5, 0.5, -2.5, 0.5, 0.5, -2.5, -0.5, -0.5, -2.5, -0.5 )
+
+[sub_resource type="SpatialMaterial" id=11]
+albedo_color = Color( 0.352941, 0.74902, 0.8, 1 )
 
 [node name="Main" type="Spatial"]
 
@@ -110,14 +114,51 @@ mesh = SubResource( 7 )
 material/0 = SubResource( 8 )
 
 [node name="MeshInstance2" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.53674e-07, 2.16056, 2.69924 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.53674e-07, 2.16056, 2.89666 )
 mesh = SubResource( 9 )
 
 [node name="StaticBody" type="StaticBody" parent="MeshInstance2"]
-collision_layer = 8193
 
 [node name="CollisionShape" type="CollisionShape" parent="MeshInstance2/StaticBody"]
-shape = SubResource( 10 )
+shape = SubResource( 12 )
+
+[node name="HidingSpots" type="Spatial" parent="MeshInstance2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.92832, 0 )
+
+[node name="1" type="Spatial" parent="MeshInstance2/HidingSpots" groups=["HidingSpot"]]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5 )
+
+[node name="MeshInstance2" type="MeshInstance" parent="MeshInstance2/HidingSpots/1"]
+transform = Transform( 1.91069e-15, -4.37114e-08, 1, -1, -4.37114e-08, 0, 4.37114e-08, -1, -4.37114e-08, 0, 0.736, -0.24353 )
+mesh = SubResource( 7 )
+material/0 = SubResource( 11 )
+
+[node name="2" type="Spatial" parent="MeshInstance2/HidingSpots" groups=["HidingSpot"]]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 1.5 )
+
+[node name="MeshInstance2" type="MeshInstance" parent="MeshInstance2/HidingSpots/2"]
+transform = Transform( 1.91069e-15, -4.37114e-08, 1, -1, -4.37114e-08, 0, 4.37114e-08, -1, -4.37114e-08, 0, 0.736, -0.24353 )
+mesh = SubResource( 7 )
+material/0 = SubResource( 11 )
+
+[node name="3" type="Spatial" parent="MeshInstance2/HidingSpots" groups=["HidingSpot"]]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 1.5, 0, 0 )
+
+[node name="MeshInstance2" type="MeshInstance" parent="MeshInstance2/HidingSpots/3"]
+transform = Transform( 1.91069e-15, -4.37114e-08, 1, -1, -4.37114e-08, 0, 4.37114e-08, -1, -4.37114e-08, 0, 0.736, -0.24353 )
+mesh = SubResource( 7 )
+material/0 = SubResource( 11 )
+
+[node name="4" type="Spatial" parent="MeshInstance2/HidingSpots" groups=["HidingSpot"]]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -1.5, 0, 0 )
+
+[node name="MeshInstance2" type="MeshInstance" parent="MeshInstance2/HidingSpots/4"]
+transform = Transform( 1.91069e-15, -4.37114e-08, 1, -1, -4.37114e-08, 0, 4.37114e-08, -1, -4.37114e-08, 0, 0.736, -0.24353 )
+mesh = SubResource( 7 )
+material/0 = SubResource( 11 )
 
 [node name="Sword" parent="." instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8.56834, 0.0500019, -15.9678 )
+
+[node name="Ally" parent="." instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.0941, 1.11722, 0 )
