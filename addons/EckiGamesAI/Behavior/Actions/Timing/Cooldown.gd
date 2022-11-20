@@ -5,10 +5,6 @@ export var minTime = 10.0
 export var maxTime = 10.0
 export var cooldownName = ""
 
-var previousTick = -1
-var cooldownActive = false
-var currentCooldownTime = 0.0
-
 func tick(actor, blackboard):
 	if !enabled: return SUCCESS
 	
@@ -17,16 +13,16 @@ func tick(actor, blackboard):
 	
 	var currentCooldown = (OS.get_ticks_msec()-lastFire)/1000.0
 	
-	if currentCooldown >= currentCooldownTime: cooldownActive = false
-	if cooldownActive: return FAILED
+	if currentCooldown >= blackboard.get("CurrentCooldownTime", 0, cooldownName): blackboard.set("CooldownActive", false, cooldownName)
+	if blackboard.get("CooldownActive", false, cooldownName): return FAILED
 	
 	if blackboard.get(cooldownName, false):
-		startCooldown()
+		startCooldown(blackboard)
 		blackboard.set(cooldownName, false)
 		return FAILED
 	
 	return SUCCESS
 
-func startCooldown():
-	cooldownActive = true
-	currentCooldownTime = rand_range(minTime, maxTime)
+func startCooldown(blackboard):
+	blackboard.set("CooldownActive", true, cooldownName)
+	blackboard.set("CurrentCooldownTime", rand_range(minTime, maxTime), cooldownName)

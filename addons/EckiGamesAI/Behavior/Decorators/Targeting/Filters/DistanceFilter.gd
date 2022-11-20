@@ -17,4 +17,5 @@ func filterTargets(actor, blackboard, targetList):
 func withinDistance(nodeA : Spatial, nodeB : Spatial):
 	var localTranslation = nodeA.to_local(nodeB.global_transform.origin)
 	if ignoreY: localTranslation.y = 0
+	
 	return localTranslation.length() <= distance

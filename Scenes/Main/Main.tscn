@@ -49,6 +49,7 @@ transform = Transform( 5, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0 )
 mesh = SubResource( 1 )
 
 [node name="StaticBody" type="StaticBody" parent="MeshInstance"]
+collision_layer = 8193
 
 [node name="CollisionShape" type="CollisionShape" parent="MeshInstance/StaticBody"]
 shape = SubResource( 2 )
@@ -118,12 +119,14 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.53674e-07, 2.16056, 2.89666
 mesh = SubResource( 9 )
 
 [node name="StaticBody" type="StaticBody" parent="MeshInstance2"]
+collision_layer = 8193
 
 [node name="CollisionShape" type="CollisionShape" parent="MeshInstance2/StaticBody"]
 shape = SubResource( 12 )
 
 [node name="HidingSpots" type="Spatial" parent="MeshInstance2"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.92832, 0 )
+visible = false
 
 [node name="1" type="Spatial" parent="MeshInstance2/HidingSpots" groups=["HidingSpot"]]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5 )

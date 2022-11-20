@@ -140,9 +140,9 @@ _global_script_classes=[ {
 "path": "res://addons/EckiGamesAI/Behavior/Actions/Movement/GroupWithTargets.gd"
 }, {
 "base": "BehaviorNode",
-"class": "HasBBCondition",
+"class": "HasBBExpression",
 "language": "GDScript",
-"path": "res://addons/EckiGamesAI/Behavior/Actions/Other/HasBBCondition.gd"
+"path": "res://addons/EckiGamesAI/Behavior/Actions/Other/HasBBExpression.gd"
 }, {
 "base": "TargetAction",
 "class": "HasTarget",
@@ -296,7 +296,7 @@ _global_script_class_icons={
 "FactionFilter": "res://addons/EckiGamesAI/Icons/Swords.png",
 "FilterAction": "res://addons/EckiGamesAI/Icons/Filter.png",
 "GroupWithTargets": "res://addons/EckiGamesAI/Icons/MoveIcon.png",
-"HasBBCondition": "res://addons/EckiGamesAI/Icons/QuestionMark.png",
+"HasBBExpression": "res://addons/EckiGamesAI/Icons/QuestionMark.png",
 "HasTarget": "res://addons/EckiGamesAI/Icons/QuestionMark.png",
 "Inverter": "res://addons/EckiGamesAI/Icons/Inverter.png",
 "LOSFilter": "res://addons/EckiGamesAI/Icons/Eye.png",

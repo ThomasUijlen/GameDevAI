@@ -8,5 +8,6 @@ func tick(actor, blackboard):
 	
 	blackboard.set("LastFire", Time.get_ticks_msec(), cooldownName)
 	blackboard.set(cooldownName, true)
+	
 	return SUCCESS
 

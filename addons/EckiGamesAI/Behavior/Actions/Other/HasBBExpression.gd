@@ -1,4 +1,4 @@
-class_name HasBBCondition, "res://addons/EckiGamesAI/Icons/QuestionMark.png"
+class_name HasBBExpression, "res://addons/EckiGamesAI/Icons/QuestionMark.png"
 extends BehaviorNode
 
 export(String, MULTILINE) var expression

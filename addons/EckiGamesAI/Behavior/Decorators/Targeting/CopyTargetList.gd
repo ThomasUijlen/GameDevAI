@@ -8,14 +8,13 @@ var targetList = null
 func tick(actor, blackboard):
 	if !enabled: return SUCCESS
 	
+	if targetList:
+		blackboard.set("TargetNew", false, targetName)
+	
 	var targetNew = blackboard.get("TargetNew", null, groupToCopy)
 	if targetNew == true:
 		targetList = null
 	else:
-		return SUCCESS
-	
-	if targetList:
-		blackboard.set("TargetNew", false, targetName)
 		return SUCCESS
 	
 	targetList = blackboard.get("TargetList", [], groupToCopy).duplicate()

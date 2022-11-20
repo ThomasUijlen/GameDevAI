@@ -13,7 +13,6 @@ func filterTargets(actor, blackboard, targetList):
 	
 	for target in targetList:
 		var targetPosition = target.global_transform.origin
-		print(checkExpression(actor, blackboard, target))
 		if (!inverted and checkExpression(actor, blackboard, target)) or (inverted and !checkExpression(actor, blackboard, target)):
 			targetsToRemove.append(target)
 	

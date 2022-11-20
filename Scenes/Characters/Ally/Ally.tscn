@@ -1,12 +1,13 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=32 format=2]
 
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionChooser.gd" type="Script" id=1]
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionMover.gd" type="Script" id=2]
 [ext_resource path="res://Scenes/Characters/CharacterController.gd" type="Script" id=3]
 [ext_resource path="res://addons/EckiGamesAI/Main/BehaviorTree.gd" type="Script" id=4]
-[ext_resource path="res://AI/PreBuiltBehaviors/RandomWanderSequence.tscn" type="PackedScene" id=5]
+[ext_resource path="res://AI/PreBuiltBehaviors/ChaseTarget.tscn" type="PackedScene" id=5]
 [ext_resource path="res://addons/EckiGamesAI/Parts/Rotator.gd" type="Script" id=6]
 [ext_resource path="res://addons/EckiGamesAI/Main/Composites/Selector.gd" type="Script" id=7]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Other/SetBBValue.gd" type="Script" id=8]
 [ext_resource path="res://addons/EckiGamesAI/Main/Composites/Sequence.gd" type="Script" id=9]
 [ext_resource path="res://AI/PreBuiltBehaviors/EnemyDetection.tscn" type="PackedScene" id=10]
 [ext_resource path="res://addons/EckiGamesAI/Parts/Faction.gd" type="Script" id=11]
@@ -14,7 +15,11 @@
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/HasTarget.gd" type="Script" id=13]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Movement/LookAtTarget.gd" type="Script" id=14]
 [ext_resource path="res://AI/PreBuiltBehaviors/RememberEnemiesSequence.tscn" type="PackedScene" id=15]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Other/HasBBExpression.gd" type="Script" id=16]
 [ext_resource path="res://AI/PreBuiltBehaviors/SpawnBreadCrumbs.tscn" type="PackedScene" id=17]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Other/Inverter.gd" type="Script" id=18]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Timing/Cooldown.gd" type="Script" id=19]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Timing/TriggerCooldown.gd" type="Script" id=20]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/CopyTargetList.gd" type="Script" id=22]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/DistanceFilter.gd" type="Script" id=23]
 [ext_resource path="res://addons/EckiGamesAI/Main/Composites/Parallel.gd" type="Script" id=24]
@@ -118,17 +123,23 @@ script = ExtResource( 9 )
 
 [node name="SelectTargetsFromGroup" type="Node" parent="BehaviorTree/Sequence/PlayerAttacked/Sequence"]
 script = ExtResource( 29 )
-targetName = "Player"
+targetName = "Players"
 groupName = "Player"
+scanInterval = 0.2
+
+[node name="CopyTargetList" type="Node" parent="BehaviorTree/Sequence/PlayerAttacked/Sequence"]
+script = ExtResource( 22 )
+targetName = "AttackedPlayers"
+groupToCopy = "Players"
 
 [node name="ExpressionFilter" type="Node" parent="BehaviorTree/Sequence/PlayerAttacked/Sequence"]
 script = ExtResource( 27 )
-targetName = "Player"
+targetName = "AttackedPlayers"
 expression = "target.beingAttacked()"
 
 [node name="HasTarget" type="Node" parent="BehaviorTree/Sequence/PlayerAttacked"]
 script = ExtResource( 13 )
-targetName = "Player"
+targetName = "AttackedPlayers"
 
 [node name="EnemyDetection" parent="BehaviorTree/Sequence/PlayerAttacked" instance=ExtResource( 10 )]
 
@@ -159,18 +170,134 @@ script = ExtResource( 9 )
 script = ExtResource( 29 )
 targetName = "HidingSpots"
 groupName = "HidingSpot"
-scanInterval = 0.1
+scanInterval = 0.2
 
 [node name="CopyTargetList" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide"]
 script = ExtResource( 22 )
 targetName = "GoodHidingSpots"
 groupToCopy = "HidingSpots"
 
+[node name="ExpressionFilter" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide"]
+script = ExtResource( 27 )
+targetName = "GoodHidingSpots"
+expression = "target.global_transform.basis.z.dot(target.global_transform.origin.direction_to(blackboard.get(\"TargetList\", [], \"RememberedEnemies\")[0].global_transform.origin)) < 0.5"
+
 [node name="Selector" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide"]
 script = ExtResource( 7 )
 
+[node name="ThrowBomb" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector"]
+script = ExtResource( 9 )
+
+[node name="HasBBExpression" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb"]
+script = ExtResource( 16 )
+expression = "blackboard.get(\"Hiding\") || blackboard.get(\"ThrowingBomb\")"
+
+[node name="SetBBValue" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb"]
+script = ExtResource( 8 )
+valueName = "ThrowingBomb"
+value = [ true ]
+
+[node name="Selector" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb"]
+script = ExtResource( 7 )
+
+[node name="Wait" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector"]
+script = ExtResource( 9 )
+
+[node name="Inverter" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Wait"]
+script = ExtResource( 18 )
+
+[node name="Cooldown" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Wait/Inverter"]
+script = ExtResource( 19 )
+minTime = 2.0
+maxTime = 2.0
+cooldownName = "WaitAndHide"
+
+[node name="WalkUntilLOS" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector"]
+script = ExtResource( 9 )
+
+[node name="Inverter" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/WalkUntilLOS"]
+script = ExtResource( 18 )
+
+[node name="HasTarget" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/WalkUntilLOS/Inverter"]
+script = ExtResource( 13 )
+__meta__ = {
+"_editor_description_": ""
+}
+targetName = "VisibleEnemies"
+
+[node name="Cooldown" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/WalkUntilLOS"]
+script = ExtResource( 19 )
+cooldownName = "Bomb"
+
+[node name="MoveToTarget" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/WalkUntilLOS"]
+script = ExtResource( 12 )
+targetName = "RememberedEnemies"
+directionChooserPath = NodePath("../../../../../../../../../../KinematicBody/DirectionMover/DirectionChooser")
+divertIfStuck = false
+
+[node name="LookAtTarget" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/WalkUntilLOS"]
+script = ExtResource( 14 )
+targetName = "RememberedEnemies"
+rotatorPath = NodePath("../../../../../../../../../../KinematicBody/Rotator")
+
+[node name="Sequence" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector"]
+script = ExtResource( 9 )
+
+[node name="Selector" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence"]
+script = ExtResource( 7 )
+
+[node name="Sequence" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence/Selector"]
+script = ExtResource( 9 )
+
+[node name="Cooldown" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence/Selector/Sequence"]
+script = ExtResource( 19 )
+cooldownName = "Bomb"
+
+[node name="TriggerCooldown" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence/Selector/Sequence"]
+script = ExtResource( 20 )
+cooldownName = "Bomb"
+
+[node name="Parallel" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence/Selector"]
+script = ExtResource( 24 )
+
+[node name="HidingAfterThrow" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence/Selector/Parallel"]
+script = ExtResource( 9 )
+
+[node name="CopyTargetList" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence/Selector/Parallel/HidingAfterThrow"]
+script = ExtResource( 22 )
+targetName = "ReachedHidingSpots"
+groupToCopy = "GoodHidingSpots"
+
+[node name="DistanceFilter" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence/Selector/Parallel/HidingAfterThrow"]
+script = ExtResource( 23 )
+targetName = "ReachedHidingSpots"
+alwaysFilter = true
+distance = 0.5
+
+[node name="Inverter" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence/Selector/Parallel/HidingAfterThrow"]
+script = ExtResource( 18 )
+
+[node name="HasTarget" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence/Selector/Parallel/HidingAfterThrow/Inverter"]
+script = ExtResource( 13 )
+targetName = "ReachedHidingSpots"
+
+[node name="MoveToTarget" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence/Selector/Parallel/HidingAfterThrow"]
+script = ExtResource( 12 )
+targetName = "GoodHidingSpots"
+directionChooserPath = NodePath("../../../../../../../../../../../../../KinematicBody/DirectionMover/DirectionChooser")
+
+[node name="LookAtTarget" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence/Selector/Parallel/HidingAfterThrow"]
+script = ExtResource( 14 )
+targetName = "GoodHidingSpots"
+rotatorPath = NodePath("../../../../../../../../../../../../../KinematicBody/Rotator")
+
 [node name="Hiding" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector"]
 script = ExtResource( 9 )
+
+[node name="SetBBValue2" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/Hiding"]
+script = ExtResource( 8 )
+valueName = "Hiding"
+value = [ false ]
 
 [node name="CopyTargetList" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/Hiding"]
 script = ExtResource( 22 )
@@ -186,6 +313,15 @@ distance = 0.5
 script = ExtResource( 13 )
 targetName = "ReachedHidingSpots"
 
+[node name="SetBBValue" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/Hiding"]
+script = ExtResource( 8 )
+valueName = "Hiding"
+value = [ true ]
+
+[node name="TriggerCooldown" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/Hiding"]
+script = ExtResource( 20 )
+cooldownName = "WaitAndHide"
+
 [node name="Hide" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector"]
 script = ExtResource( 9 )
 
@@ -199,17 +335,22 @@ script = ExtResource( 14 )
 targetName = "GoodHidingSpots"
 rotatorPath = NodePath("../../../../../../../../KinematicBody/Rotator")
 
-[node name="RandomWander" parent="BehaviorTree/Sequence/Selector" instance=ExtResource( 5 )]
+[node name="ChaseTarget" parent="BehaviorTree/Sequence/Selector" instance=ExtResource( 5 )]
 
-[node name="SetRandomTarget" parent="BehaviorTree/Sequence/Selector/RandomWander/PointSelection/Selector/Sequence" index="1"]
-originRadius = 5.0
+[node name="CopyTargetList" parent="BehaviorTree/Sequence/Selector/ChaseTarget" index="0"]
+groupToCopy = "Players"
 
-[node name="MoveToTarget" parent="BehaviorTree/Sequence/Selector/RandomWander/Wander" index="0"]
-directionChooserPath = NodePath("../../../../../../KinematicBody/DirectionMover/DirectionChooser")
+[node name="DistanceFilter" parent="BehaviorTree/Sequence/Selector/ChaseTarget" index="3"]
+enabled = true
+inverted = true
+distance = 5.0
 
-[node name="LookAtTarget" parent="BehaviorTree/Sequence/Selector/RandomWander/Wander" index="1"]
-rotatorPath = NodePath("../../../../../../KinematicBody/Rotator")
+[node name="MoveToTarget" parent="BehaviorTree/Sequence/Selector/ChaseTarget/Selector/Chase" index="0"]
+directionChooserPath = NodePath("../../../../../../../KinematicBody/DirectionMover/DirectionChooser")
+
+[node name="LookAtTarget" parent="BehaviorTree/Sequence/Selector/ChaseTarget/Selector/Chase" index="1"]
+rotatorPath = NodePath("../../../../../../../KinematicBody/Rotator")
 
 [editable path="BehaviorTree/Sequence/PlayerAttacked/EnemyDetection"]
 [editable path="BehaviorTree/Sequence/RememberEnemiesSequence"]
-[editable path="BehaviorTree/Sequence/Selector/RandomWander"]
+[editable path="BehaviorTree/Sequence/Selector/ChaseTarget"]

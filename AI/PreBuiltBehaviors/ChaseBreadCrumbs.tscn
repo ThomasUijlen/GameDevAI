@@ -23,6 +23,7 @@ groupToCopy = "BreadCrumbs"
 [node name="ValidInstanceFilter" type="Node" parent="."]
 script = ExtResource( 7 )
 targetName = "VisibleCrumbs"
+alwaysFilter = true
 
 [node name="LOSFilter" type="Node" parent="."]
 script = ExtResource( 4 )

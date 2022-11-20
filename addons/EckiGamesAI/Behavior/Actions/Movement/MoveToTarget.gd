@@ -4,6 +4,7 @@ extends TargetAction
 export var directionChooserPath : NodePath
 export var directionWeight = 1.0
 export var movementIntensity = 1.0
+export var divertIfStuck = true
 export var inverted = false
 
 var directionChooser : DirectionChooser
@@ -22,6 +23,7 @@ func tick(actor, blackboard):
 	selectTarget(actor, blackboard)
 	
 	if target == null: return FAILED
+	
 	applyDirection(actor, blackboard)
 	return SUCCESS
 
@@ -39,7 +41,7 @@ func walkAround(actor, blackboard):
 		lastPosition = actor.global_transform.origin
 		timeSinceMove = 0.0
 	
-	timeSinceMove += blackboard.get("delta")
+	if divertIfStuck: timeSinceMove += blackboard.get("delta")
 	if timeSinceMove >= 2 && walkAroundTimer <= 0:
 		walkAroundTimer = 3.0
 		if rand_range(0,100) > 50: avoidanceDirection = -avoidanceDirection
