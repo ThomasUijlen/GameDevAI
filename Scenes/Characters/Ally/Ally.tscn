@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=2]
+[gd_scene load_steps=36 format=2]
 
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionChooser.gd" type="Script" id=1]
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionMover.gd" type="Script" id=2]
@@ -20,9 +20,12 @@
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Other/Inverter.gd" type="Script" id=18]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Timing/Cooldown.gd" type="Script" id=19]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Timing/TriggerCooldown.gd" type="Script" id=20]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Other/CallFunction.gd" type="Script" id=21]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/CopyTargetList.gd" type="Script" id=22]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/DistanceFilter.gd" type="Script" id=23]
 [ext_resource path="res://addons/EckiGamesAI/Main/Composites/Parallel.gd" type="Script" id=24]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/ClearTargetList.gd" type="Script" id=25]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/ForgetTargets.gd" type="Script" id=26]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/ExpressionFilter.gd" type="Script" id=27]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/SelectTargetsFromGroup.gd" type="Script" id=29]
 
@@ -44,6 +47,17 @@ emission = Color( 1, 1, 1, 1 )
 emission_energy = 1.0
 emission_operator = 0
 emission_on_uv2 = false
+
+[sub_resource type="GDScript" id=8]
+script/source = "extends Spatial
+
+var bombScene = preload(\"res://Scenes/Weapons/SmokeBomb/SmokeBomb.tscn\")
+
+func throwBomb(tree : BehaviorTree):
+	var bomb : Spatial = bombScene.instance()
+	get_tree().current_scene.add_child(bomb)
+	bomb.throwTo(global_translation, tree.blackboard.get(\"TargetList\", [], \"RememberedEnemies\")[0].global_translation)
+"
 
 [sub_resource type="SphereShape" id=5]
 radius = 30.0
@@ -82,6 +96,7 @@ mesh = SubResource( 3 )
 material/0 = SubResource( 7 )
 
 [node name="DirectionMover" type="Spatial" parent="KinematicBody"]
+visible = false
 script = ExtResource( 2 )
 
 [node name="DirectionChooser" type="Spatial" parent="KinematicBody/DirectionMover"]
@@ -91,6 +106,10 @@ script = ExtResource( 1 )
 script = ExtResource( 6 )
 nodeToRotate = NodePath("../Body")
 rotationSpeed = 2.0
+
+[node name="BombThrower" type="Spatial" parent="KinematicBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.499979, 0 )
+script = SubResource( 8 )
 
 [node name="Area" type="Area" parent="KinematicBody"]
 collision_layer = 0
@@ -115,6 +134,45 @@ actor_node_path = NodePath("../KinematicBody")
 [node name="Sequence" type="Node" parent="BehaviorTree"]
 script = ExtResource( 24 )
 
+[node name="ForgetEnemies" type="Node" parent="BehaviorTree/Sequence"]
+script = ExtResource( 24 )
+
+[node name="Sequence" type="Node" parent="BehaviorTree/Sequence/ForgetEnemies"]
+script = ExtResource( 9 )
+
+[node name="Inverter" type="Node" parent="BehaviorTree/Sequence/ForgetEnemies/Sequence"]
+script = ExtResource( 18 )
+
+[node name="HasTarget" type="Node" parent="BehaviorTree/Sequence/ForgetEnemies/Sequence/Inverter"]
+script = ExtResource( 13 )
+targetName = "AttackedPlayers"
+
+[node name="ClearTargetList" type="Node" parent="BehaviorTree/Sequence/ForgetEnemies/Sequence"]
+script = ExtResource( 25 )
+targetName = "VisibleEnemies"
+
+[node name="ClearTargetList2" type="Node" parent="BehaviorTree/Sequence/ForgetEnemies/Sequence"]
+script = ExtResource( 25 )
+targetName = "NearbyEnemies"
+
+[node name="ClearTargetList3" type="Node" parent="BehaviorTree/Sequence/ForgetEnemies/Sequence"]
+script = ExtResource( 25 )
+targetName = "ReachedHidingSpots"
+
+[node name="ForgetTargets" type="Node" parent="BehaviorTree/Sequence/ForgetEnemies/Sequence"]
+script = ExtResource( 26 )
+targetName = "RememberedEnemies"
+
+[node name="SetBBValue" type="Node" parent="BehaviorTree/Sequence/ForgetEnemies/Sequence"]
+script = ExtResource( 8 )
+valueName = "ThrowingBomb"
+value = [ false ]
+
+[node name="SetBBValue2" type="Node" parent="BehaviorTree/Sequence/ForgetEnemies/Sequence"]
+script = ExtResource( 8 )
+valueName = "Hiding"
+value = [ false ]
+
 [node name="PlayerAttacked" type="Node" parent="BehaviorTree/Sequence"]
 script = ExtResource( 9 )
 
@@ -135,6 +193,7 @@ groupToCopy = "Players"
 [node name="ExpressionFilter" type="Node" parent="BehaviorTree/Sequence/PlayerAttacked/Sequence"]
 script = ExtResource( 27 )
 targetName = "AttackedPlayers"
+inverted = true
 expression = "target.beingAttacked()"
 
 [node name="HasTarget" type="Node" parent="BehaviorTree/Sequence/PlayerAttacked"]
@@ -252,6 +311,12 @@ script = ExtResource( 9 )
 [node name="Cooldown" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence/Selector/Sequence"]
 script = ExtResource( 19 )
 cooldownName = "Bomb"
+
+[node name="CallFunction" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence/Selector/Sequence"]
+script = ExtResource( 21 )
+nodePath = NodePath("../../../../../../../../../../../../KinematicBody/BombThrower")
+functionName = "throwBomb"
+parameters = [ NodePath("../../../../../../../../../../..") ]
 
 [node name="TriggerCooldown" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence/Selector/Sequence"]
 script = ExtResource( 20 )

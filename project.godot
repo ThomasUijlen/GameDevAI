@@ -79,6 +79,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/CopyTargetList.gd"
 }, {
+"base": "BehaviorNode",
+"class": "DestroyAllCrumbs",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Breadcrumbs/DestroyAllCrumbs.gd"
+}, {
 "base": "TargetAction",
 "class": "DetectTargetsInArea",
 "language": "GDScript",
@@ -133,6 +138,11 @@ _global_script_classes=[ {
 "class": "FilterAction",
 "language": "GDScript",
 "path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/FilterAction.gd"
+}, {
+"base": "TargetAction",
+"class": "ForgetTargets",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/ForgetTargets.gd"
 }, {
 "base": "TargetAction",
 "class": "GroupWithTargets",
@@ -284,6 +294,7 @@ _global_script_class_icons={
 "Cooldown": "res://addons/EckiGamesAI/Icons/Time.png",
 "CopyAndInsertTargetList": "res://addons/EckiGamesAI/Icons/Duplicate.png",
 "CopyTargetList": "res://addons/EckiGamesAI/Icons/Duplicate.png",
+"DestroyAllCrumbs": "res://addons/EckiGamesAI/Icons/Trash.png",
 "DetectTargetsInArea": "res://addons/EckiGamesAI/Icons/Area.png",
 "DirectionChooser": "",
 "DirectionRay": "",
@@ -295,6 +306,7 @@ _global_script_class_icons={
 "Faction": "",
 "FactionFilter": "res://addons/EckiGamesAI/Icons/Swords.png",
 "FilterAction": "res://addons/EckiGamesAI/Icons/Filter.png",
+"ForgetTargets": "res://addons/EckiGamesAI/Icons/Trash.png",
 "GroupWithTargets": "res://addons/EckiGamesAI/Icons/MoveIcon.png",
 "HasBBExpression": "res://addons/EckiGamesAI/Icons/QuestionMark.png",
 "HasTarget": "res://addons/EckiGamesAI/Icons/QuestionMark.png",

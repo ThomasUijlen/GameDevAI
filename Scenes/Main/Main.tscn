@@ -161,7 +161,13 @@ mesh = SubResource( 7 )
 material/0 = SubResource( 11 )
 
 [node name="Sword" parent="." instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8.56834, 0.0500019, -15.9678 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.64737, 0.0500019, -11.9529 )
+
+[node name="Sword2" parent="." instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 10.9965, 0.0500019, 6.19659 )
+
+[node name="Sword3" parent="." instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.92839, 0.0500019, 4.21913 )
 
 [node name="Ally" parent="." instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.0941, 1.11722, 0 )

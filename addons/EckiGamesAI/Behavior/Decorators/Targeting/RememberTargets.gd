@@ -22,7 +22,7 @@ func tick(actor, blackboard):
 	
 	if memory == null:
 		memory = blackboard.get("Memory", {}, targetName)
-		blackboard.set("Memory", memory.keys(), targetName)
+		blackboard.set("Memory", memory, targetName)
 	
 	expireOldTargets()
 	
