@@ -31,8 +31,6 @@ script = ExtResource( 1 )
 
 [node name="Cooldown" type="Node" parent="PointSelection/Selector/Sequence"]
 script = ExtResource( 11 )
-minTime = 2.0
-maxTime = 5.0
 cooldownName = "RandomIdleTime"
 
 [node name="SetRandomTarget" type="Node" parent="PointSelection/Selector/Sequence"]
@@ -68,7 +66,6 @@ targetName = "ReachedPoints"
 
 [node name="Cooldown" type="Node" parent="PointSelection/PointReachedDetection/Selector"]
 script = ExtResource( 11 )
-minTime = 7.0
 cooldownName = "RandomWanderTimeout"
 
 [node name="ClearTargetList" type="Node" parent="PointSelection/PointReachedDetection"]

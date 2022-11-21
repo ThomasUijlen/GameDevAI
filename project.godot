@@ -210,6 +210,11 @@ _global_script_classes=[ {
 "path": "res://addons/EckiGamesAI/Parts/Rotator.gd"
 }, {
 "base": "TargetAction",
+"class": "SaveCurrentPosition",
+"language": "GDScript",
+"path": "res://addons/EckiGamesAI/Behavior/Actions/Movement/SaveCurrentPosition.gd"
+}, {
+"base": "TargetAction",
 "class": "SelectSpecificTargets",
 "language": "GDScript",
 "path": "res://addons/EckiGamesAI/Behavior/Decorators/Targeting/SelectSpecificTargets.gd"
@@ -320,6 +325,7 @@ _global_script_class_icons={
 "RefreshTargetList": "res://addons/EckiGamesAI/Icons/LoopDecorator.png",
 "RememberTargets": "res://addons/EckiGamesAI/Icons/Memory.png",
 "Rotator": "",
+"SaveCurrentPosition": "res://addons/EckiGamesAI/Icons/SpecificDecorator.png",
 "SelectSpecificTargets": "res://addons/EckiGamesAI/Icons/SpecificDecorator.png",
 "SelectTargetsFromGroup": "res://addons/EckiGamesAI/Icons/SpecificSelect.png",
 "Selector": "res://addons/EckiGamesAI/Icons/Selector.png",

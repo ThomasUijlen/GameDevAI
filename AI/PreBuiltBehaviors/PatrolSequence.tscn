@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://addons/EckiGamesAI/Main/Composites/Sequence.gd" type="Script" id=1]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/SelectTargetsFromGroup.gd" type="Script" id=2]
@@ -18,6 +18,8 @@
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/RefreshTargetList.gd" type="Script" id=16]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Other/AlwaysSucceed.gd" type="Script" id=17]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/SizeFilter.gd" type="Script" id=18]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Movement/SaveCurrentPosition.gd" type="Script" id=19]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Other/CallFunctionOnTarget.gd" type="Script" id=20]
 
 [node name="PatrolSequence" type="Node"]
 script = ExtResource( 1 )
@@ -28,75 +30,159 @@ targetName = "PatrolPoints"
 groupName = "PatrolPoint"
 scanInterval = 1e+07
 
-[node name="UpdateList" type="Node" parent="."]
-script = ExtResource( 12 )
+[node name="Selector" type="Node" parent="."]
+script = ExtResource( 9 )
 
-[node name="Sequence" type="Node" parent="UpdateList"]
+[node name="RestorePosition" type="Node" parent="Selector"]
 script = ExtResource( 1 )
 
-[node name="ExpireTargetList" type="Node" parent="UpdateList/Sequence"]
+[node name="Parallel" type="Node" parent="Selector/RestorePosition"]
+script = ExtResource( 12 )
+
+[node name="ClearIfOnPath" type="Node" parent="Selector/RestorePosition/Parallel"]
+script = ExtResource( 1 )
+
+[node name="Inverter" type="Node" parent="Selector/RestorePosition/Parallel/ClearIfOnPath"]
+script = ExtResource( 10 )
+
+[node name="Cooldown" type="Node" parent="Selector/RestorePosition/Parallel/ClearIfOnPath/Inverter"]
+script = ExtResource( 14 )
+cooldownName = "Restore"
+
+[node name="CallFunctionOnTarget" type="Node" parent="Selector/RestorePosition/Parallel/ClearIfOnPath"]
+script = ExtResource( 20 )
+targetName = "OldPosition"
+functionName = "pointReached"
+
+[node name="ClearTargetList" type="Node" parent="Selector/RestorePosition/Parallel/ClearIfOnPath"]
+script = ExtResource( 11 )
+targetName = "OldPosition"
+
+[node name="WalkBackToPosition" type="Node" parent="Selector/RestorePosition"]
+script = ExtResource( 1 )
+
+[node name="HasTarget" type="Node" parent="Selector/RestorePosition/WalkBackToPosition"]
+script = ExtResource( 5 )
+targetName = "OldPosition"
+
+[node name="CopyTargetList" type="Node" parent="Selector/RestorePosition/WalkBackToPosition"]
+script = ExtResource( 4 )
+targetName = "ReachedPosition"
+groupToCopy = "OldPosition"
+
+[node name="DistanceFilter" type="Node" parent="Selector/RestorePosition/WalkBackToPosition"]
+script = ExtResource( 3 )
+targetName = "ReachedPosition"
+distance = 1.0
+
+[node name="Parallel" type="Node" parent="Selector/RestorePosition/WalkBackToPosition"]
+script = ExtResource( 12 )
+
+[node name="Sequence" type="Node" parent="Selector/RestorePosition/WalkBackToPosition/Parallel"]
+script = ExtResource( 1 )
+
+[node name="HasTarget" type="Node" parent="Selector/RestorePosition/WalkBackToPosition/Parallel/Sequence"]
+script = ExtResource( 5 )
+targetName = "ReachedPosition"
+
+[node name="CallFunctionOnTarget" type="Node" parent="Selector/RestorePosition/WalkBackToPosition/Parallel/Sequence"]
+script = ExtResource( 20 )
+targetName = "OldPosition"
+functionName = "pointReached"
+
+[node name="ClearTargetList" type="Node" parent="Selector/RestorePosition/WalkBackToPosition/Parallel/Sequence"]
+script = ExtResource( 11 )
+targetName = "OldPosition"
+
+[node name="MoveToTarget" type="Node" parent="Selector/RestorePosition/WalkBackToPosition"]
+script = ExtResource( 8 )
+targetName = "OldPosition"
+
+[node name="LookAtTarget" type="Node" parent="Selector/RestorePosition/WalkBackToPosition"]
+script = ExtResource( 7 )
+targetName = "OldPosition"
+
+[node name="Patrol" type="Node" parent="Selector"]
+script = ExtResource( 1 )
+
+[node name="UpdateList" type="Node" parent="Selector/Patrol"]
+script = ExtResource( 12 )
+
+[node name="Sequence" type="Node" parent="Selector/Patrol/UpdateList"]
+script = ExtResource( 1 )
+
+[node name="ExpireTargetList" type="Node" parent="Selector/Patrol/UpdateList/Sequence"]
 script = ExtResource( 15 )
 targetName = "PatrolPoints"
 
-[node name="Cooldown" type="Node" parent="UpdateList/Sequence"]
+[node name="Cooldown" type="Node" parent="Selector/Patrol/UpdateList/Sequence"]
 script = ExtResource( 14 )
-minTime = 0.5
-maxTime = 0.5
 cooldownName = "PatrolUpdate"
 
-[node name="RefreshTargetList" type="Node" parent="UpdateList/Sequence"]
+[node name="RefreshTargetList" type="Node" parent="Selector/Patrol/UpdateList/Sequence"]
 script = ExtResource( 16 )
 targetName = "PatrolPoints"
 
-[node name="TriggerCooldown" type="Node" parent="UpdateList/Sequence"]
+[node name="TriggerCooldown" type="Node" parent="Selector/Patrol/UpdateList/Sequence"]
 script = ExtResource( 13 )
 cooldownName = "PatrolUpdate"
 
-[node name="ReachDetection" type="Node" parent="."]
+[node name="ReachDetection" type="Node" parent="Selector/Patrol"]
 script = ExtResource( 1 )
 
-[node name="CopyTargetList" type="Node" parent="ReachDetection"]
+[node name="CopyTargetList" type="Node" parent="Selector/Patrol/ReachDetection"]
 script = ExtResource( 4 )
 targetName = "ReachedPoints"
 groupToCopy = "PatrolPoints"
 
-[node name="SizeFilter" type="Node" parent="ReachDetection"]
+[node name="SizeFilter" type="Node" parent="Selector/Patrol/ReachDetection"]
 script = ExtResource( 18 )
 targetName = "ReachedPoints"
 
-[node name="DistanceFilter" type="Node" parent="ReachDetection"]
+[node name="DistanceFilter" type="Node" parent="Selector/Patrol/ReachDetection"]
 script = ExtResource( 3 )
 targetName = "ReachedPoints"
 distance = 1.0
 
-[node name="Selector" type="Node" parent="ReachDetection"]
+[node name="Selector" type="Node" parent="Selector/Patrol/ReachDetection"]
 script = ExtResource( 9 )
 
-[node name="Inverter" type="Node" parent="ReachDetection/Selector"]
+[node name="Inverter" type="Node" parent="Selector/Patrol/ReachDetection/Selector"]
 script = ExtResource( 10 )
 
-[node name="HasTarget" type="Node" parent="ReachDetection/Selector/Inverter"]
+[node name="HasTarget" type="Node" parent="Selector/Patrol/ReachDetection/Selector/Inverter"]
 script = ExtResource( 5 )
 targetName = "ReachedPoints"
 
-[node name="Sequence" type="Node" parent="ReachDetection/Selector"]
+[node name="Sequence" type="Node" parent="Selector/Patrol/ReachDetection/Selector"]
 script = ExtResource( 1 )
 
-[node name="LoopTargets" type="Node" parent="ReachDetection/Selector/Sequence"]
+[node name="LoopTargets" type="Node" parent="Selector/Patrol/ReachDetection/Selector/Sequence"]
 script = ExtResource( 6 )
 targetName = "PatrolPoints"
 
-[node name="ClearTargetList" type="Node" parent="ReachDetection/Selector/Sequence"]
+[node name="ClearTargetList" type="Node" parent="Selector/Patrol/ReachDetection/Selector/Sequence"]
 script = ExtResource( 11 )
 targetName = "ReachedPoints"
 
-[node name="AlwaysSucceed" type="Node" parent="ReachDetection/Selector"]
+[node name="AlwaysSucceed" type="Node" parent="Selector/Patrol/ReachDetection/Selector"]
 script = ExtResource( 17 )
 
-[node name="MoveToTarget" type="Node" parent="."]
+[node name="MoveToTarget" type="Node" parent="Selector/Patrol"]
 script = ExtResource( 8 )
 targetName = "PatrolPoints"
+movementIntensity = 0.5
 
-[node name="LookAtTarget" type="Node" parent="."]
+[node name="LookAtTarget" type="Node" parent="Selector/Patrol"]
 script = ExtResource( 7 )
 targetName = "PatrolPoints"
+
+[node name="SaveCurrentPosition" type="Node" parent="Selector/Patrol"]
+script = ExtResource( 19 )
+targetName = "OldPosition"
+
+[node name="TriggerCooldown" type="Node" parent="Selector/Patrol"]
+script = ExtResource( 13 )
+minTime = 2.0
+maxTime = 2.0
+cooldownName = "Restore"

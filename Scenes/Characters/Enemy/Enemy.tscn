@@ -1,10 +1,9 @@
-[gd_scene load_steps=40 format=2]
+[gd_scene load_steps=39 format=2]
 
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionChooser.gd" type="Script" id=1]
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionMover.gd" type="Script" id=2]
 [ext_resource path="res://Scenes/Characters/CharacterController.gd" type="Script" id=3]
 [ext_resource path="res://addons/EckiGamesAI/Main/BehaviorTree.gd" type="Script" id=4]
-[ext_resource path="res://AI/PreBuiltBehaviors/RandomWanderSequence.tscn" type="PackedScene" id=5]
 [ext_resource path="res://addons/EckiGamesAI/Parts/Rotator.gd" type="Script" id=6]
 [ext_resource path="res://addons/EckiGamesAI/Main/Composites/Selector.gd" type="Script" id=7]
 [ext_resource path="res://AI/PreBuiltBehaviors/PatrolSequence.tscn" type="PackedScene" id=8]
@@ -116,28 +115,28 @@ actor_node_path = NodePath("../KinematicBody")
 [node name="Selector" type="Node" parent="BehaviorTree"]
 script = ExtResource( 7 )
 
-[node name="Sequence" type="Node" parent="BehaviorTree/Selector"]
+[node name="SmokeBomb" type="Node" parent="BehaviorTree/Selector"]
 script = ExtResource( 9 )
 
-[node name="SelectTargetsFromGroup" type="Node" parent="BehaviorTree/Selector/Sequence"]
+[node name="SelectTargetsFromGroup" type="Node" parent="BehaviorTree/Selector/SmokeBomb"]
 script = ExtResource( 31 )
 targetName = "SmokeBombs"
 groupName = "SmokeBomb"
 
-[node name="DistanceFilter" type="Node" parent="BehaviorTree/Selector/Sequence"]
+[node name="DistanceFilter" type="Node" parent="BehaviorTree/Selector/SmokeBomb"]
 script = ExtResource( 23 )
 targetName = "SmokeBombs"
 distance = 3.0
 
-[node name="HasTarget" type="Node" parent="BehaviorTree/Selector/Sequence"]
+[node name="HasTarget" type="Node" parent="BehaviorTree/Selector/SmokeBomb"]
 script = ExtResource( 13 )
 targetName = "SmokeBombs"
 
-[node name="ForgetTargets" type="Node" parent="BehaviorTree/Selector/Sequence"]
+[node name="ForgetTargets" type="Node" parent="BehaviorTree/Selector/SmokeBomb"]
 script = ExtResource( 33 )
 targetName = "RememberedEnemies"
 
-[node name="DestroyAllCrumbs" type="Node" parent="BehaviorTree/Selector/Sequence"]
+[node name="DestroyAllCrumbs" type="Node" parent="BehaviorTree/Selector/SmokeBomb"]
 script = ExtResource( 34 )
 crumbsName = "BreadCrumbs"
 
@@ -337,23 +336,17 @@ rotatorPath = NodePath("../../../../../../KinematicBody/Rotator")
 
 [node name="PatrolSequence" parent="BehaviorTree/Selector/Sequence2/Selector" instance=ExtResource( 8 )]
 
-[node name="MoveToTarget" parent="BehaviorTree/Selector/Sequence2/Selector/PatrolSequence" index="3"]
-directionChooserPath = NodePath("../../../../../../KinematicBody/DirectionMover/DirectionChooser")
-movementIntensity = 0.5
-divertIfStuck = false
+[node name="MoveToTarget" parent="BehaviorTree/Selector/Sequence2/Selector/PatrolSequence/Selector/RestorePosition/WalkBackToPosition" index="4"]
+directionChooserPath = NodePath("../../../../../../../../../KinematicBody/DirectionMover/DirectionChooser")
 
-[node name="LookAtTarget" parent="BehaviorTree/Selector/Sequence2/Selector/PatrolSequence" index="4"]
-rotatorPath = NodePath("../../../../../../KinematicBody/Rotator")
+[node name="LookAtTarget" parent="BehaviorTree/Selector/Sequence2/Selector/PatrolSequence/Selector/RestorePosition/WalkBackToPosition" index="5"]
+rotatorPath = NodePath("../../../../../../../../../KinematicBody/Rotator")
 
-[node name="RandomWander" parent="BehaviorTree/Selector/Sequence2/Selector" instance=ExtResource( 5 )]
-enabled = false
+[node name="MoveToTarget" parent="BehaviorTree/Selector/Sequence2/Selector/PatrolSequence/Selector/Patrol" index="2"]
+directionChooserPath = NodePath("../../../../../../../../KinematicBody/DirectionMover/DirectionChooser")
 
-[node name="MoveToTarget" parent="BehaviorTree/Selector/Sequence2/Selector/RandomWander/Wander" index="0"]
-directionChooserPath = NodePath("../../../../../../../KinematicBody/DirectionMover/DirectionChooser")
-
-[node name="LookAtTarget" parent="BehaviorTree/Selector/Sequence2/Selector/RandomWander/Wander" index="1"]
-rotatorPath = NodePath("../../../../../../../KinematicBody/Rotator")
+[node name="LookAtTarget" parent="BehaviorTree/Selector/Sequence2/Selector/PatrolSequence/Selector/Patrol" index="3"]
+rotatorPath = NodePath("../../../../../../../../KinematicBody/Rotator")
 
 [editable path="BehaviorTree/Selector/Sequence2/Selector/ChaseBreadCrumbs"]
 [editable path="BehaviorTree/Selector/Sequence2/Selector/PatrolSequence"]
-[editable path="BehaviorTree/Selector/Sequence2/Selector/RandomWander"]

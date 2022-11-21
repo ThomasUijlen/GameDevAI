@@ -267,8 +267,6 @@ script = ExtResource( 18 )
 
 [node name="Cooldown" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Wait/Inverter"]
 script = ExtResource( 19 )
-minTime = 2.0
-maxTime = 2.0
 cooldownName = "WaitAndHide"
 
 [node name="WalkUntilLOS" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector"]
@@ -385,6 +383,8 @@ value = [ true ]
 
 [node name="TriggerCooldown" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/Hiding"]
 script = ExtResource( 20 )
+minTime = 2.0
+maxTime = 2.0
 cooldownName = "WaitAndHide"
 
 [node name="Hide" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector"]
