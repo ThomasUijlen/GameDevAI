@@ -23,6 +23,7 @@ groupToShare = "VisibleEnemies"
 script = ExtResource( 3 )
 targetName = "RememberedEnemies"
 groupToRemember = "SharedEnemies"
+expireSelf = false
 
 [node name="ExpireTargetList" type="Node" parent="."]
 script = ExtResource( 4 )

@@ -12,6 +12,7 @@ func tick(actor, blackboard):
 		blackboard.set("TargetNew", false, targetName)
 	
 	var targetNew = blackboard.get("TargetNew", null, groupToCopy)
+	
 	if targetNew == true:
 		targetList = null
 	else:

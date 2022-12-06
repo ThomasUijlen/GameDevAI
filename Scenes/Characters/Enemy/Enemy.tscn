@@ -1,9 +1,10 @@
-[gd_scene load_steps=39 format=2]
+[gd_scene load_steps=40 format=2]
 
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionChooser.gd" type="Script" id=1]
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionMover.gd" type="Script" id=2]
 [ext_resource path="res://Scenes/Characters/CharacterController.gd" type="Script" id=3]
 [ext_resource path="res://addons/EckiGamesAI/Main/BehaviorTree.gd" type="Script" id=4]
+[ext_resource path="res://Assets/Fonts/NormalTextOutline.tres" type="DynamicFont" id=5]
 [ext_resource path="res://addons/EckiGamesAI/Parts/Rotator.gd" type="Script" id=6]
 [ext_resource path="res://addons/EckiGamesAI/Main/Composites/Selector.gd" type="Script" id=7]
 [ext_resource path="res://AI/PreBuiltBehaviors/PatrolSequence.tscn" type="PackedScene" id=8]
@@ -108,6 +109,12 @@ monitorable = false
 [node name="CollisionShape" type="CollisionShape" parent="KinematicBody/Area2"]
 shape = SubResource( 5 )
 
+[node name="Label3D" type="Label3D" parent="KinematicBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62106, 0 )
+billboard = 2
+text = "State"
+font = ExtResource( 5 )
+
 [node name="BehaviorTree" type="Node" parent="."]
 script = ExtResource( 4 )
 actor_node_path = NodePath("../KinematicBody")
@@ -140,6 +147,12 @@ targetName = "RememberedEnemies"
 script = ExtResource( 34 )
 crumbsName = "BreadCrumbs"
 
+[node name="SetText" type="Node" parent="BehaviorTree/Selector/SmokeBomb"]
+script = ExtResource( 28 )
+nodePath = NodePath("../../../../KinematicBody/Label3D")
+functionName = "set"
+parameters = [ "text", "Stunned" ]
+
 [node name="Sequence2" type="Node" parent="BehaviorTree/Selector"]
 script = ExtResource( 9 )
 
@@ -150,6 +163,7 @@ script = ExtResource( 9 )
 script = ExtResource( 31 )
 targetName = "NearbyEnemies"
 groupName = "Player"
+scanInterval = 0.5
 
 [node name="FactionFilter" type="Node" parent="BehaviorTree/Selector/Sequence2/EnemyDetection"]
 script = ExtResource( 29 )
@@ -177,6 +191,41 @@ collision_mask = 9216
 [node name="RememberEnemiesSequence" parent="BehaviorTree/Selector/Sequence2" instance=ExtResource( 15 )]
 
 [node name="SpawnBreadCrumbs" parent="BehaviorTree/Selector/Sequence2" instance=ExtResource( 17 )]
+
+[node name="Parallel" type="Node" parent="BehaviorTree/Selector/Sequence2"]
+script = ExtResource( 24 )
+
+[node name="EnemyDistanceCheck" type="Node" parent="BehaviorTree/Selector/Sequence2/Parallel"]
+script = ExtResource( 9 )
+
+[node name="CopyTargetList" type="Node" parent="BehaviorTree/Selector/Sequence2/Parallel/EnemyDistanceCheck"]
+script = ExtResource( 22 )
+targetName = "NearEnemies"
+groupToCopy = "RememberedEnemies"
+
+[node name="DistanceFilter" type="Node" parent="BehaviorTree/Selector/Sequence2/Parallel/EnemyDistanceCheck"]
+script = ExtResource( 23 )
+targetName = "NearEnemies"
+distance = 5.0
+
+[node name="Inverter" type="Node" parent="BehaviorTree/Selector/Sequence2/Parallel/EnemyDistanceCheck"]
+script = ExtResource( 19 )
+
+[node name="HasTarget" type="Node" parent="BehaviorTree/Selector/Sequence2/Parallel/EnemyDistanceCheck/Inverter"]
+script = ExtResource( 13 )
+targetName = "NearEnemies"
+
+[node name="ForgetTargets" type="Node" parent="BehaviorTree/Selector/Sequence2/Parallel/EnemyDistanceCheck"]
+script = ExtResource( 33 )
+targetName = "RememberedEnemies"
+
+[node name="ClearTargetList" type="Node" parent="BehaviorTree/Selector/Sequence2/Parallel/EnemyDistanceCheck"]
+script = ExtResource( 26 )
+targetName = "VisibleEnemies"
+
+[node name="DestroyAllCrumbs" type="Node" parent="BehaviorTree/Selector/Sequence2/Parallel/EnemyDistanceCheck"]
+script = ExtResource( 34 )
+crumbsName = "BreadCrumbs"
 
 [node name="DetectWeapons" type="Node" parent="BehaviorTree/Selector/Sequence2"]
 script = ExtResource( 9 )
@@ -242,6 +291,12 @@ directionChooserPath = NodePath("../../../../../../../KinematicBody/DirectionMov
 script = ExtResource( 14 )
 targetName = "Weapons"
 rotatorPath = NodePath("../../../../../../../KinematicBody/Rotator")
+
+[node name="SetText" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/HasEnemy/FindWeapon"]
+script = ExtResource( 28 )
+nodePath = NodePath("../../../../../../../KinematicBody/Label3D")
+functionName = "set"
+parameters = [ "text", "Seeking Weapon" ]
 
 [node name="GrabWeapon" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/HasEnemy/FindWeapon"]
 script = ExtResource( 24 )
@@ -309,22 +364,34 @@ script = ExtResource( 28 )
 nodePath = NodePath("../../../../../../../KinematicBody/Body/WeaponController")
 functionName = "attack"
 
+[node name="SetText" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/HasEnemy/AttackEnemy"]
+script = ExtResource( 28 )
+nodePath = NodePath("../../../../../../../KinematicBody/Label3D")
+functionName = "set"
+parameters = [ "text", "Attacking" ]
+
 [node name="ChaseEnemy" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/HasEnemy"]
 script = ExtResource( 9 )
 
 [node name="HasTarget" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/HasEnemy/ChaseEnemy"]
 script = ExtResource( 13 )
-targetName = "VisibleEnemies"
+targetName = "RememberedEnemies"
 
 [node name="MoveToTarget" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/HasEnemy/ChaseEnemy"]
 script = ExtResource( 12 )
-targetName = "VisibleEnemies"
+targetName = "RememberedEnemies"
 directionChooserPath = NodePath("../../../../../../../KinematicBody/DirectionMover/DirectionChooser")
 
 [node name="LookAtTarget" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/HasEnemy/ChaseEnemy"]
 script = ExtResource( 14 )
-targetName = "VisibleEnemies"
+targetName = "RememberedEnemies"
 rotatorPath = NodePath("../../../../../../../KinematicBody/Rotator")
+
+[node name="SetText" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/HasEnemy/ChaseEnemy"]
+script = ExtResource( 28 )
+nodePath = NodePath("../../../../../../../KinematicBody/Label3D")
+functionName = "set"
+parameters = [ "text", "Chasing" ]
 
 [node name="ChaseBreadCrumbs" parent="BehaviorTree/Selector/Sequence2/Selector" instance=ExtResource( 16 )]
 
@@ -338,15 +405,28 @@ rotatorPath = NodePath("../../../../../../KinematicBody/Rotator")
 
 [node name="MoveToTarget" parent="BehaviorTree/Selector/Sequence2/Selector/PatrolSequence/Selector/RestorePosition/WalkBackToPosition" index="4"]
 directionChooserPath = NodePath("../../../../../../../../../KinematicBody/DirectionMover/DirectionChooser")
+divertIfStuck = false
 
 [node name="LookAtTarget" parent="BehaviorTree/Selector/Sequence2/Selector/PatrolSequence/Selector/RestorePosition/WalkBackToPosition" index="5"]
 rotatorPath = NodePath("../../../../../../../../../KinematicBody/Rotator")
+
+[node name="SetText" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/PatrolSequence/Selector/RestorePosition/WalkBackToPosition" index="6"]
+script = ExtResource( 28 )
+nodePath = NodePath("../../../../../../../../../KinematicBody/Label3D")
+functionName = "set"
+parameters = [ "text", "Recovering path" ]
 
 [node name="MoveToTarget" parent="BehaviorTree/Selector/Sequence2/Selector/PatrolSequence/Selector/Patrol" index="2"]
 directionChooserPath = NodePath("../../../../../../../../KinematicBody/DirectionMover/DirectionChooser")
 
 [node name="LookAtTarget" parent="BehaviorTree/Selector/Sequence2/Selector/PatrolSequence/Selector/Patrol" index="3"]
 rotatorPath = NodePath("../../../../../../../../KinematicBody/Rotator")
+
+[node name="SetText" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/PatrolSequence/Selector/Patrol" index="6"]
+script = ExtResource( 28 )
+nodePath = NodePath("../../../../../../../../KinematicBody/Label3D")
+functionName = "set"
+parameters = [ "text", "Patrolling" ]
 
 [editable path="BehaviorTree/Selector/Sequence2/Selector/ChaseBreadCrumbs"]
 [editable path="BehaviorTree/Selector/Sequence2/Selector/PatrolSequence"]

@@ -10,6 +10,11 @@ func tick(actor, blackboard):
 	var targetNew = blackboard.get("TargetNew", null, targetName)
 	if alwaysFilter: targetNew = true
 	
+#	if targetName == "NearEnemies":
+#		print("huh")
+#		print(targetName)
+#		print(targetNew)
+	
 	if targetNew == null: return FAILED
 	if targetNew == false: return SUCCESS
 	

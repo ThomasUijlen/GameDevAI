@@ -7,8 +7,7 @@ func tick(actor, blackboard):
 	var memory : Dictionary = blackboard.get("Memory", {}, targetName)
 	
 	for target in memory:
-		print(target)
 		memory[target] = -100000000
 	
-	blackboard.set("TargetList", memory.keys(), targetName)
+	blackboard.set("TargetList", [], targetName)
 	return SUCCESS

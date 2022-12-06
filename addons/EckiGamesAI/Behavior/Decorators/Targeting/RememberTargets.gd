@@ -3,6 +3,7 @@ extends TargetAction
 
 export var groupToRemember = ""
 export var memoryLength = 10.0
+export var expireSelf = true
 var memory : Dictionary
 
 var memoryLengthMSEC : int
@@ -14,6 +15,9 @@ func tick(actor, blackboard):
 	if !enabled: return SUCCESS
 	
 	var targetNew = blackboard.get("TargetNew", null, groupToRemember)
+	
+	if blackboard.get("TargetNew", null, targetName) == true && expireSelf:
+		blackboard.set("TargetNew", false, targetName)
 	if targetNew == null: return FAILED
 	if targetNew == false: return SUCCESS
 	
@@ -31,6 +35,7 @@ func tick(actor, blackboard):
 		memory[target] = currentTime
 	
 	blackboard.set("TargetList", memory.keys(), targetName)
+	blackboard.set("TargetNew", true, targetName)
 	
 	return SUCCESS
 

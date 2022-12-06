@@ -28,7 +28,7 @@ script = ExtResource( 1 )
 script = ExtResource( 2 )
 targetName = "PatrolPoints"
 groupName = "PatrolPoint"
-scanInterval = 1e+07
+scanInterval = 1e+08
 
 [node name="Selector" type="Node" parent="."]
 script = ExtResource( 9 )
@@ -125,6 +125,8 @@ targetName = "PatrolPoints"
 
 [node name="TriggerCooldown" type="Node" parent="Selector/Patrol/UpdateList/Sequence"]
 script = ExtResource( 13 )
+minTime = 0.5
+maxTime = 0.5
 cooldownName = "PatrolUpdate"
 
 [node name="ReachDetection" type="Node" parent="Selector/Patrol"]
@@ -172,6 +174,7 @@ script = ExtResource( 17 )
 script = ExtResource( 8 )
 targetName = "PatrolPoints"
 movementIntensity = 0.5
+divertIfStuck = false
 
 [node name="LookAtTarget" type="Node" parent="Selector/Patrol"]
 script = ExtResource( 7 )
