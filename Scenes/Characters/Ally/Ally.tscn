@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=2]
+[gd_scene load_steps=37 format=2]
 
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionChooser.gd" type="Script" id=1]
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionMover.gd" type="Script" id=2]
@@ -27,6 +27,7 @@
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/ClearTargetList.gd" type="Script" id=25]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/ForgetTargets.gd" type="Script" id=26]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Filters/ExpressionFilter.gd" type="Script" id=27]
+[ext_resource path="res://Assets/Fonts/NormalTextOutline.tres" type="DynamicFont" id=28]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/SelectTargetsFromGroup.gd" type="Script" id=29]
 
 [sub_resource type="CapsuleShape" id=1]
@@ -126,6 +127,12 @@ monitorable = false
 
 [node name="CollisionShape" type="CollisionShape" parent="KinematicBody/Area2"]
 shape = SubResource( 5 )
+
+[node name="Label3D" type="Label3D" parent="KinematicBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62106, 0 )
+billboard = 2
+text = "State"
+font = ExtResource( 28 )
 
 [node name="BehaviorTree" type="Node" parent="."]
 script = ExtResource( 4 )
@@ -297,6 +304,12 @@ script = ExtResource( 14 )
 targetName = "RememberedEnemies"
 rotatorPath = NodePath("../../../../../../../../../../KinematicBody/Rotator")
 
+[node name="SetText" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/WalkUntilLOS"]
+script = ExtResource( 21 )
+nodePath = NodePath("../../../../../../../../../../KinematicBody/Label3D")
+functionName = "set"
+parameters = [ "text", "Throwing bomb" ]
+
 [node name="Sequence" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector"]
 script = ExtResource( 9 )
 
@@ -354,6 +367,12 @@ script = ExtResource( 14 )
 targetName = "GoodHidingSpots"
 rotatorPath = NodePath("../../../../../../../../../../../../../KinematicBody/Rotator")
 
+[node name="SetText" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/ThrowBomb/Selector/Sequence/Selector/Parallel/HidingAfterThrow"]
+script = ExtResource( 21 )
+nodePath = NodePath("../../../../../../../../../../../../../KinematicBody/Label3D")
+functionName = "set"
+parameters = [ "text", "Hiding" ]
+
 [node name="Hiding" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector"]
 script = ExtResource( 9 )
 
@@ -387,6 +406,12 @@ minTime = 2.0
 maxTime = 2.0
 cooldownName = "WaitAndHide"
 
+[node name="SetText" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/Hiding"]
+script = ExtResource( 21 )
+nodePath = NodePath("../../../../../../../../KinematicBody/Label3D")
+functionName = "set"
+parameters = [ "text", "Hiding" ]
+
 [node name="Hide" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector"]
 script = ExtResource( 9 )
 
@@ -399,6 +424,12 @@ directionChooserPath = NodePath("../../../../../../../../KinematicBody/Direction
 script = ExtResource( 14 )
 targetName = "GoodHidingSpots"
 rotatorPath = NodePath("../../../../../../../../KinematicBody/Rotator")
+
+[node name="SetText" type="Node" parent="BehaviorTree/Sequence/Selector/Sequence/Hide/Selector/Hide"]
+script = ExtResource( 21 )
+nodePath = NodePath("../../../../../../../../KinematicBody/Label3D")
+functionName = "set"
+parameters = [ "text", "Running to hiding spot" ]
 
 [node name="ChaseTarget" parent="BehaviorTree/Sequence/Selector" instance=ExtResource( 5 )]
 
@@ -415,6 +446,12 @@ directionChooserPath = NodePath("../../../../../../../KinematicBody/DirectionMov
 
 [node name="LookAtTarget" parent="BehaviorTree/Sequence/Selector/ChaseTarget/Selector/Chase" index="1"]
 rotatorPath = NodePath("../../../../../../../KinematicBody/Rotator")
+
+[node name="SetText" type="Node" parent="BehaviorTree/Sequence/Selector/ChaseTarget/Selector/Chase" index="2"]
+script = ExtResource( 21 )
+nodePath = NodePath("../../../../../../../KinematicBody/Label3D")
+functionName = "set"
+parameters = [ "text", "Following player" ]
 
 [editable path="BehaviorTree/Sequence/PlayerAttacked/EnemyDetection"]
 [editable path="BehaviorTree/Sequence/RememberEnemiesSequence"]
