@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=2]
+[gd_scene load_steps=42 format=2]
 
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionChooser.gd" type="Script" id=1]
 [ext_resource path="res://addons/EckiGamesAI/Parts/DirectionMover.gd" type="Script" id=2]
@@ -34,6 +34,8 @@
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Other/SetBBValue.gd" type="Script" id=32]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/ForgetTargets.gd" type="Script" id=33]
 [ext_resource path="res://addons/EckiGamesAI/Behavior/Decorators/Targeting/Breadcrumbs/DestroyAllCrumbs.gd" type="Script" id=34]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Timing/Cooldown.gd" type="Script" id=35]
+[ext_resource path="res://addons/EckiGamesAI/Behavior/Actions/Timing/TriggerCooldown.gd" type="Script" id=36]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.5
@@ -369,6 +371,28 @@ script = ExtResource( 28 )
 nodePath = NodePath("../../../../../../../KinematicBody/Label3D")
 functionName = "set"
 parameters = [ "text", "Attacking" ]
+
+[node name="Parallel" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/HasEnemy/AttackEnemy"]
+script = ExtResource( 24 )
+
+[node name="Sequence" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/HasEnemy/AttackEnemy/Parallel"]
+script = ExtResource( 9 )
+
+[node name="Cooldown" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/HasEnemy/AttackEnemy/Parallel/Sequence"]
+script = ExtResource( 35 )
+cooldownName = "DamageTarget"
+
+[node name="CallFunctionOnTarget" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/HasEnemy/AttackEnemy/Parallel/Sequence"]
+script = ExtResource( 25 )
+targetName = "VisibleEnemies"
+functionName = "damage"
+parameters = [ 5 ]
+
+[node name="TriggerCooldown" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/HasEnemy/AttackEnemy/Parallel/Sequence"]
+script = ExtResource( 36 )
+minTime = 1.0
+maxTime = 1.0
+cooldownName = "DamageTarget"
 
 [node name="ChaseEnemy" type="Node" parent="BehaviorTree/Selector/Sequence2/Selector/HasEnemy"]
 script = ExtResource( 9 )
