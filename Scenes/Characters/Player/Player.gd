@@ -35,3 +35,5 @@ func _input(event):
 		health = maxHealth
 		$Dead.visible = false
 	
+	if event.is_action_pressed("Escape"):
+		get_tree().quit()
